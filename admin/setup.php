@@ -2,7 +2,10 @@
 
 mysql_connect('localhost', 'username', 'password') or die(mysql_error());
 mysql_select_db('databasename') or die(mysql_error());
-
+session_start();
+if(empty($_SESSION['user_id'])){
+ header("location:index.php");
+}
 //Process
 if (isset($_POST['submit']))
 {
