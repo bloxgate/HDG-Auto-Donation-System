@@ -1,3 +1,9 @@
+<?php
+session_start();
+if(isset($_SESSION['user_id']) && !(empty($_SESSION['user_id']) || $_SESSION['user_id'] == "" || $_SESSION['user_id'] == null)){
+ header("location:admin.php");
+}
+?>
 <html><head>
 <link href="default.css" rel="stylesheet" type="text/css" />
 </head><body bgcolor="tan">
@@ -14,7 +20,7 @@
 <tr>
 <td width="78">Username</td>
 <td width="6">:</td>
-<td width="294"><input name="myusername" type="text" id="myusername"></td>
+<td width="294"><input name="myusername" type="text" id="myusername" <?php if(isset($_GET['u']){ echo "value=\"{$_GET['u']}\""; } ?>></td>
 </tr>
 <tr>
 <td>Password</td>
@@ -32,6 +38,6 @@
 </tr>
 </table>
 <center>
-<br><br>Return to</font><a href="index.html"><b>Website</b></a>
+<br><br>Return to the </font><a href="../index.html"><b>Front-End</b></a>
 </center>
 </body></html>

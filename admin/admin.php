@@ -1,6 +1,8 @@
 <?php
-mysql_connect('localhost', 'username', 'password') or die(mysql_error());
-mysql_select_db('databasename') or die(mysql_error());
+define('IS_INTERNAL', 1);
+require "../core/settings.php";
+mysql_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword']) or die(mysql_error());
+mysql_select_db($setting['dbname']) or die(mysql_error());
 
 session_start();
 //If your session isn't valid, it returns you to the login screen for protection
