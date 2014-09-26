@@ -54,6 +54,7 @@ input[type="password"]
     width: 80%;
     background-color: #CDCD96;
 }  
+
 .license_agreement {
 	margin: 10px auto;
 	padding: 10px;
@@ -61,4 +62,10 @@ input[type="password"]
 	height: 400px;
 	width: 560px;
 	border: 1px solid #ccc;
+}
+
+
+.license_agreement ul {
+	padding: 0;
+	margin: 15px;
 }

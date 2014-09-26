@@ -1,7 +1,18 @@
 <?php
 session_start();
-if(isset($_SESSION['user_id']) && !(empty($_SESSION['user_id']) || $_SESSION['user_id'] == "" || $_SESSION['user_id'] == null)){
- header("location:admin.php");
+define('IS_INTERNAL',1);
+require "../core/settings.php";
+$db = mysqli_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword'], $setting['dbname']);
+
+if(isset($_SESSION['user_id']) && isset($_SESSION['user_username']))
+{
+	$sql="SELECT * FROM admin WHERE id='{$_SESSION['user_id']}' AND username='{$_SESSION['user_username']}'" or die(mysql_error());
+	$result=mysqli_query($db, $sql);
+	$count=mysqli_num_rows($result);
+	if($count==1)
+	{
+		header("location:admin.php");
+	}
 }
 ?>
 <html><head>
@@ -20,7 +31,7 @@ if(isset($_SESSION['user_id']) && !(empty($_SESSION['user_id']) || $_SESSION['us
 <tr>
 <td width="78">Username</td>
 <td width="6">:</td>
-<td width="294"><input name="myusername" type="text" id="myusername" <?php if(isset($_GET['u']){ echo "value=\"{$_GET['u']}\""; } ?>></td>
+<td width="294"><input name="myusername" type="text" id="myusername"></td>
 </tr>
 <tr>
 <td>Password</td>
@@ -38,6 +49,6 @@ if(isset($_SESSION['user_id']) && !(empty($_SESSION['user_id']) || $_SESSION['us
 </tr>
 </table>
 <center>
-<br><br>Return to the </font><a href="../index.html"><b>Front-End</b></a>
+<br><br>Return to </font><a href="../"><b>Front-End</b></a>
 </center>
 </body></html>

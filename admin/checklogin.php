@@ -4,15 +4,12 @@ error_reporting(E_ALL);
 
 ob_start();
 session_start();
-$host="localhost"; // Host name
-$username="username"; // Database username
-$password="password"; // Database password
-$db_name="databasename"; // Database name
-$tbl_name="users"; // Table name
 
 // This will connect you to your database
-mysql_connect("$host", "$username", "$password")or die("cannot connect");
-mysql_select_db("$db_name")or die("cannot select DB");
+define('IS_INTERNAL', 1);
+require "../core/settings.php";
+mysql_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword']) or die(mysql_error());
+mysql_select_db($setting['dbname']) or die(mysql_error());
 
 // Defining your login details into variables
 $myusername=$_POST['myusername'];
@@ -24,7 +21,7 @@ $mypassword = stripslashes($mypassword);
 $myusername = mysql_real_escape_string($myusername);
 $mypassword = mysql_real_escape_string($mypassword);
 
-$sql="SELECT * FROM $tbl_name WHERE username='$myusername' and password='$encrypted_mypassword'" or die(mysql_error());
+$sql="SELECT * FROM admin WHERE username='$myusername' and password='$encrypted_mypassword'" or die(mysql_error());
 $result=mysql_query($sql) or die(mysql_error());
 
 // Checking table row
@@ -35,6 +32,7 @@ if($count==1){
 // If everything checks out, you will now be forwarded to admin.php
 $user = mysql_fetch_assoc($result);
  $_SESSION['user_id'] = $user['id'];
+ $_SESSION['user_username'] = $user['username'];
 header("location:admin.php");
 }
 //If the username or password is wrong, you will receive this message below.

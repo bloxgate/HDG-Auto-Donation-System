@@ -1,11 +1,9 @@
 <?php
+define('IS_INTERNAL', 1);
+require "../core/settings.php";
+mysql_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword']) or die(mysql_error());
+mysql_select_db($setting['dbname']) or die(mysql_error());
 
-mysql_connect('localhost', 'username', 'password') or die(mysql_error());
-mysql_select_db('databasename') or die(mysql_error());
-session_start();
-if(empty($_SESSION['user_id'])){
- header("location:index.php");
-}
 //Process
 if (isset($_POST['submit']))
 {
@@ -23,7 +21,7 @@ die( "You have registered for an account.<br><br>Go to <a href=\"login.html\">Lo
 }
 
 echo "Register an account by filling in the needed information below.<br><br>";
-echo '<form action="registeracc.php" method="post">';
+echo '<form action="setup.php" method="post">';
 echo '<table><tr><td>';
 echo "<b>Username:</b></td><td><input type='text' style='background-color:#999999; font-weight:bold;' name='username' maxlength='15' value=''></td></tr>";
 echo "<tr><td><b>Password:</b></td><td><input type='password' style='background-color:#999999; font-weight:bold;' name='password' maxlength='15' value=''></td></tr>";
