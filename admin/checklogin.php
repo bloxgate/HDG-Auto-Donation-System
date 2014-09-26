@@ -8,6 +8,7 @@ session_start();
 // This will connect you to your database
 define('IS_INTERNAL', 1);
 require "../core/settings.php";
+// Note: Switch to mysqli, mysql is deprecated. 
 mysql_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword']) or die(mysql_error());
 mysql_select_db($setting['dbname']) or die(mysql_error());
 
@@ -28,16 +29,18 @@ $result=mysql_query($sql) or die(mysql_error());
 $count=mysql_num_rows($result);
 // If username and password is a match, the count will be 1
 
-if($count==1){
-// If everything checks out, you will now be forwarded to admin.php
-$user = mysql_fetch_assoc($result);
- $_SESSION['user_id'] = $user['id'];
- $_SESSION['user_username'] = $user['username'];
-header("location:admin.php");
+if($count==1)
+{
+	// If everything checks out, you will now be forwarded to admin.php
+	$user = mysql_fetch_assoc($result);
+	setcookie('user_id', $user['id'], time()+3600); // Todo: domain.
+	setcookie('user_username', $user['username'], time()+3600); // Todo: domain.
+	header("location:admin.php");
 }
 //If the username or password is wrong, you will receive this message below.
-else {
-echo "Wrong Username or Password<br><br>Return to <a href=\"index.php\">login</a>";
+else
+{
+	echo "Wrong Username or Password<br><br>Return to <a href=\"index.php\">login</a>";
 }
 
 ob_end_flush();

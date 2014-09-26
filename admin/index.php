@@ -4,9 +4,9 @@ define('IS_INTERNAL',1);
 require "../core/settings.php";
 $db = mysqli_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword'], $setting['dbname']);
 
-if(isset($_SESSION['user_id']) && isset($_SESSION['user_username']))
+if(isset($_COOKIE['user_id']) && isset($_COOKIE['user_username']) && $_COOKIE['user_id'] != null)
 {
-	$sql="SELECT * FROM admin WHERE id='{$_SESSION['user_id']}' AND username='{$_SESSION['user_username']}'" or die(mysql_error());
+	$sql="SELECT * FROM admin WHERE id='{$_COOKIE['user_id']}' AND username='{$_COOKIE['user_username']}'" or die(mysql_error());
 	$result=mysqli_query($db, $sql);
 	$count=mysqli_num_rows($result);
 	if($count==1)

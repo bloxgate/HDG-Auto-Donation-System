@@ -6,15 +6,15 @@ $db = mysqli_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassw
 
 session_start();
 //If your session isn't valid, it returns you to the login screen for protection
-if(empty($_SESSION['user_id']))
+if(empty($_COOKIE['user_id']))
 {
  header("location:index.php");
 }
 else
 {
-	if(isset($_SESSION['user_id']) && isset($_SESSION['user_username']))
+	if(isset($_COOKIE['user_id']) && isset($_COOKIE['user_username']))
 	{	
-		$sql="SELECT * FROM admin WHERE id='{$_SESSION['user_id']}' AND username='{$_SESSION['user_username']}'";
+		$sql="SELECT * FROM admin WHERE id='{$_COOKIE['user_id']}' AND username='{$_COOKIE['user_username']}'";
 		$result=mysqli_query($db, $sql);
 		$count=mysqli_num_rows($result);
 		if($count==0)
@@ -49,8 +49,6 @@ if (isset($_GET["x"]))
 	}
 	elseif($x[0] == "logout")
 	{
-		$_SESSION['user_username'] == "loggedout";
-		$_SESSION['user_id'] == "loggedout";
 		header("location:logout.php");
 	}
 	else
@@ -72,7 +70,7 @@ function home()
   echo '<br><center><a href="admin.php?x=logout"><font color=white>Log Out</font></a></center><br></div>';
 
 echo '<div id="adminright"><center><h1>Administrator Control Panel</h1><br><br>';
-echo "Welcome to your control panel, <strong>{$_SESSION['user_username']}</strong>. Click a link on the left side to continue.<br><br>";
+echo "Welcome to your control panel, <strong>{$_COOKIE['user_username']}</strong>. Click a link on the left side to continue.<br><br>";
 echo '</center></div></div>';
 }
  
@@ -113,7 +111,7 @@ function accounts()
 	//echo '<br>Todo: accounting<br><br>';
 	require "../core/settings.php";
 	$db = mysqli_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword'],$setting['dbname']);
-	$query = "SELECT * FROM admin WHERE id='{$_SESSION['user_id']}' AND username='{$_SESSION['user_username']}'";
+	$query = "SELECT * FROM admin WHERE id='{$_COOKIE['user_id']}' AND username='{$_COOKIE['user_username']}'";
 	$oresult=mysqli_query($db, $query);
 	//$result=mysqli_fetch_array($result);
 	$result=mysqli_fetch_row($oresult);
@@ -132,7 +130,7 @@ function accounts()
 	if($result[4] == "1")
 	{
 	$db = mysqli_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword'],$setting['dbname']);
-	$query2 = "SELECT * FROM admin WHERE id!='{$_SESSION['user_id']}'";
+	$query2 = "SELECT * FROM admin WHERE id!='{$_COOKIE['user_id']}'";
 	$end = mysqli_query($db, $query2);
 	$end1 = mysqli_fetch_all($end);
 	echo "<hr><h3>Other Acounts</h3><table>
@@ -170,7 +168,7 @@ function accounts_go()
 	require "../core/settings.php";
 	$db = mysqli_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword'],$setting['dbname']);
 	// Verify that this user is editing a valid account
-	$query = "SELECT * FROM admin WHERE id='{$_SESSION['user_id']}' AND username='{$_SESSION['user_username']}'";
+	$query = "SELECT * FROM admin WHERE id='{$_COOKIE['user_id']}' AND username='{$_COOKIE['user_username']}'";
 	$result = mysqli_query($db,$query);
 	$user = mysqli_fetch_row($result);
 	if(($_POST['id'] == $user[0] && $user[4] == "0") || $user[4] == "1") 
