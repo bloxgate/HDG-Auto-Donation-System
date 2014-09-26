@@ -3,7 +3,7 @@ define('IS_INTERNAL', 1);
 require "../core/settings.php";
 global $db;
 $db = mysqli_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword'],$setting['dbname']);
-
+// NOTE: Switch to PDO
 session_start();
 //If your session isn't valid, it returns you to the login screen for protection
 if(empty($_COOKIE['user_id']))
@@ -39,6 +39,10 @@ if (isset($_GET["x"]))
 	{
 		packages();
 	}
+	elseif($x[0] == "paypal")
+	{
+		paypal();
+	}
 	elseif($x[0] == "home")
 	{
 		home();
@@ -58,50 +62,143 @@ if (isset($_GET["x"]))
 }
 else { home(); }
 
+function menu()
+{
+// Echo the left panel.
+	echo '<div id="fulladmin">';
+	echo '<div id="adminleft">';
+	//Add a function and change this line to it.
+	echo '<br><center><a href="admin.php?x=home"><font color=';
+	if($_GET['x'] == "home" || !isset($_GET['x']))
+	{
+		echo "orange";
+	}
+	else
+	{
+		echo "white";
+	}
+	echo '>Home</font></a></center><br>';
+
+	echo '<br><center><a href="admin.php?x=packages"><font color=';
+	if($_GET['x'] == "packages")
+	{
+		echo "orange";
+	}
+	else
+	{
+		echo "white";
+	}
+	echo '>Packages</font></a></center><br>';
+	
+	echo '<br><center><a href="admin.php?x=paypal"><font color=';
+	if($_GET['x'] == "paypal")
+	{
+		echo "orange";
+	}
+	else
+	{
+		echo "white";
+	}
+	echo '>Paypal</font></a></center><br>';
+	
+	echo '<br><center><a href="admin.php?x=accounts"><font color=';
+	if($_GET['x'] == "accounts")
+	{
+		echo "orange";
+	}
+	else
+	{
+		echo "white";
+	}
+	echo '>Accounts</font></a></center><br>';
+
+	echo '<br><center><a href="admin.php?x=logout"><font color=white>Log Out</font></a></center><br></div>';
+}
 //Main Admin Homepage
 function home()
 {
-  echo '<div id="fulladmin">';
-  echo '<div id="adminleft">';
-  //Add a function and change this line to it.
-  echo '<br><center><a href="admin.php?x=home"><font color=orange>Home</font></a></center><br>';
-  echo '<br><center><a href="admin.php?x=packages"><font color=white>Packages</font></a></center><br>';
-  echo '<br><center><a href="admin.php?x=accounts"><font color=white>Accounts</font></a></center><br>';
-  echo '<br><center><a href="admin.php?x=logout"><font color=white>Log Out</font></a></center><br></div>';
-
-echo '<div id="adminright"><center><h1>Administrator Control Panel</h1><br><br>';
-echo "Welcome to your control panel, <strong>{$_COOKIE['user_username']}</strong>. Click a link on the left side to continue.<br><br>";
-echo '</center></div></div>';
+	
+	menu();
+	echo '<div id="adminright"><center><h1>Administrator Control Panel</h1><br><br>';
+	echo "Welcome to your control panel, <strong>{$_COOKIE['user_username']}</strong>. Click a link on the left side to continue.<br><br>";
 }
  
  
 //A Blank second page
 function packages()
 {
-	echo '<div id="fulladmin">';
-	echo '<div id="adminleft">';
-	//Add a function and change this line to it.
-	echo '<br><center><a href="admin.php?x=home"><font color=white>Home</font></a></center><br>';
-	echo '<br><center><a href="admin.php?x=packages"><font color=orange>Packages</font></a></center><br>';
-	echo '<br><center><a href="admin.php?x=accounts"><font color=white>Accounts</font></a></center><br>';
-	echo '<br><center><a href="admin.php?x=logout"><font color=white>Log Out</font></a></center><br></div>';
+	menu();
 	// Yay I get to set up sql shit here.
-
-echo '<div id="adminright"><center><h1>Packages</h1><br><br>';
-echo 'Server shit will go here.<br><br>';
-echo '</center></div></div>';
+	echo '<div id="adminright"><center><h1>Packages</h1><br><br>';
+	if(isset($_POST['id']))
+	{
+		packages_go();
+	}
+	echo 'This is where the donation packages can be defined for the server.<br>
+	Make sure you do not include any special characters in Price.<br><br>';
+	require "../core/settings.php";
+	$db = mysqli_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword'],$setting['dbname']);
+	$query = "SELECT * FROM packages";
+	$result = mysqli_query($db, $query);
+	echo "<hr><h3>Packages</h3><table>
+		<tr><td><b>ID</b></td><td><b>Name</b></td><td><b>Description</b></td><td><b>Price</b></td><td><b>Command</b></td><td><b>Rank<b></td><td></td></tr>";
+	$packages = mysqli_fetch_all($result);
+	foreach($result as $key => $val)
+	{
+		echo "
+			<form action=\"admin.php?x=packages\" method=\"post\">
+			<tr><td style=\"vertical-align:top\"><input type=\"hidden\" name=\"id\" value=\"{$val[id]}\">{$val[id]}</td>
+			<td style=\"vertical-align:top\"><input type=\"text\" name=\"name\" value=\"{$val[name]}\"></td>
+			<td style=\"vertical-align:top\"><textarea rows=\"4\" cols=\"25\" name=\"description\">{$val[description]}</textarea></td>
+			<td style=\"vertical-align:top\"><input type=\"text\" name=\"price\" value=\"{$val[price]}\"></td>
+			<td style=\"vertical-align:top\"><input type=\"text\" name=\"command\" value=\"{$val[command]}\"></td>
+			<td style=\"vertical-align:top\"><input type=\"text\" name=\"rank\" value=\"{$val[rank]}\"></td>
+			<td style=\"vertical-align:top\"><input type=\"submit\" name=\"submit\" value=\"Submit\"><input type=\"submit\" name=\"delete\" value=\"Delete\"></td>
+			</tr></form>";
+		
+	}
+	echo "
+		<form action=\"admin.php?x=packages\" method=\"post\">
+		<tr><td style=\"vertical-align:top\"><input type=\"hidden\" name=\"id\" value=\"NEW\">NEW</td>
+		<td style=\"vertical-align:top\"><input type=\"text\" name=\"name\"></td>
+		<td style=\"vertical-align:top\"><textarea rows=\"4\" cols=\"25\" name=\"description\"></textarea></td>
+		<td style=\"vertical-align:top\"><input type=\"text\" name=\"price\"></td>
+		<td style=\"vertical-align:top\"><input type=\"text\" name=\"command\"></td>
+		<td style=\"vertical-align:top\"><input type=\"text\" name=\"rank\"></td>
+		<td style=\"vertical-align:top\"><input type=\"submit\" name=\"submit\" value=\"Submit\"></td>
+		</tr></form>";
+		echo "</table>";
 }
-
+function packages_go()
+{
+	echo "<h3><font color=red><strong>"; // Get the admin's attention.
+	require "../core/settings.php";
+	$db = mysqli_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword'],$setting['dbname']);
+	// User is trying to edit his own account and isn't root...
+	// OR the user is a root account, and could be doing anything.
+	if($_POST['id'] != "NEW" && $_POST['delete'] != "Delete")
+	{
+		$query = "UPDATE packages SET `name` = '{$_POST['name']}', `description` = '{$_POST['description']}', `price` = '{$_POST['price']}', `command` = '{$_POST['command']}', `rank` = '{$_POST['rank']}' WHERE `id` = {$_POST['id']};";
+		$result = mysqli_query($db,$query);
+		echo "Success! Package \"{$_POST['name']}\" updated!";
+	}
+	elseif($_POST['delete'] == "Delete")
+	{
+		$query = "DELETE FROM packages WHERE `id` = {$_POST['id']}";
+		$result = mysqli_query($db,$query);
+		echo "Package \"{$_POST['name']}\" has been deleted!";
+	}
+	elseif($_POST['id'] == "NEW")
+	{
+		$query = "INSERT INTO packages (`name`, `description`, `price`, `command`,`rank`) VALUES ('{$_POST['name']}', '{$_POST['description']}', '{$_POST['price']}', '{$_POST['command']}', '{$_POST['rank']}');";
+		$result = mysqli_query($db,$query);
+		echo "New package \"{$_POST['name']}\" was successfully created!";
+	}
+	echo "</strong></font></h3><br><br>";
+}
 function accounts()
 {
-	echo '<div id="fulladmin">';
-	echo '<div id="adminleft">';
-	//Add a function and change this line to it.
-	echo '<br><center><a href="admin.php?x=home"><font color=white>Home</font></a></center><br>';
-	echo '<br><center><a href="admin.php?x=packages"><font color=white>Packages</font></a></center><br>';
-	echo '<br><center><a href="admin.php?x=accounts"><font color=orange>Accounts</font></a></center><br>';
-	echo '<br><center><a href="admin.php?x=logout"><font color=white>Log Out</font></a></center><br></div>';
-	// Yay I get to set up sql shit here.
+	menu();
 
 	echo '<div id="adminright"><center><h1>Accounts</h1><br><br>';
 	if(isset($_POST['id']))
@@ -118,6 +215,8 @@ function accounts()
 	
 	echo "<table><tr><td><b>Username</b></td><td><b>Password</b></td><td><b>Password (again)</b></td><td><b>Email</b></td><td></td></tr>
 	<form action=\"admin.php?x=accounts\" method=\"post\">
+	<input type=\"text\" name=\"fuckingautofill\" style=\"display:none\"> <!-- This serves no purpose other than making chome shag itself -->
+	<input type=\"password\" name=\"fuckingautofill2\" style=\"display:none\">
 	<tr><input type=\"hidden\" name=\"id\" value=\"{$result[0]}\">
 	<td><input type=\"hidden\" name=\"username\" value=\"{$result[1]}\">{$result[1]}</td>
 	<td><input type=\"password\" name=\"password1\"></td>
@@ -139,6 +238,8 @@ function accounts()
 		{
 			echo "
 				<form action=\"admin.php?x=accounts\" method=\"post\">
+				<input type=\"text\" name=\"fuckingautofill\" style=\"display:none\"> <!-- This serves no purpose other than making chome shag itself -->
+				<input type=\"password\" name=\"fuckingautofill2\" style=\"display:none\">
 				<tr><td><input type=\"hidden\" name=\"id\" value=\"{$val[0]}\">{$val[0]}</td>
 				<td><input type=\"hidden\" name=\"username\" value=\"{$val[1]}\">{$val[1]}</td>
 				<td><input type=\"password\" name=\"password1\"></td>
@@ -149,6 +250,8 @@ function accounts()
 		}
 		echo "
 			<form action=\"admin.php?x=accounts\" method=\"post\">
+			<input type=\"text\" name=\"fuckingautofill\" style=\"display:none\"> <!-- This serves no purpose other than making chome shag itself -->
+			<input type=\"password\" name=\"fuckingautofill2\" style=\"display:none\">
 			<tr><td><input type=\"hidden\" name=\"id\" value=\"NEW\">New Account</td>
 			<td><input type=\"text\" name=\"username\"></td>
 			<td><input type=\"password\" name=\"password1\"></td>
@@ -158,7 +261,6 @@ function accounts()
 			</tr></form>";
 	}	
 	echo '</table>';
-	echo '</center></div></div>';
 }
 function accounts_go()
 {
@@ -229,8 +331,12 @@ function accounts_go()
 	echo "</strong></font></h3><br><br>";
 	
 }
-
-
+function paypal()
+{
+menu();
+echo '<div id="adminright"><center><h1>Paypal</h1><br><br>';
+}
+echo '</center></div></div>';
 ?>
 <div id="adminright"><center><br><br><br><br>Return to main <a href="admin.php"><font color="red">Control Panel</font></a>, or you can <a href="logout.php"><font color="red">Log Out</font></a></center></div>
 </body>
