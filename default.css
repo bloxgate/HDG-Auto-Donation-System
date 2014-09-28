@@ -24,6 +24,24 @@ a:hover {
     text-decoration: none;
 }
 
+td {
+    /* border-color: rgb(65, 179, 255);
+    border-width: 2;
+    border-style: solid;
+    border-bottom-left-radius: 10;
+    border-bottom-right-radius: 10;
+    border-top-left-radius: 40;
+    border-top-right-radius: 40; */
+    padding-left: 10;
+    padding-right: 10;
+    border-spacing: 50;
+    /* background-color: rgb(216, 216, 216); */
+}
+
+h2 {
+	background-color: rgb(65, 217, 255);border-width: 2;border-color: rgb(65, 179, 255);border-style: solid;border-top-left-radius: 30;border-top-right-radius: 30;padding: 5;border-bottom-width: 1;border-bottom-style: hidden;
+}
+
 input[type="text"]
 {
   background-color: #CDBA96
@@ -68,4 +86,49 @@ input[type="password"]
 .license_agreement ul {
 	padding: 0;
 	margin: 15px;
+}
+
+.package {
+	margin: 10px auto;
+	padding: 10px;
+	overflow: scroll;
+	height: 60px;
+	width: 150px;
+	border: 0px solid #fff;
+	overflow-x: hidden;
+	word-wrap: break-word;
+	text-align: left;
+	font-size: 12;
+	overflow-y: auto;
+	background-color: rgb(215, 229, 231);
+}
+
+.package ul {
+	padding: 0;
+	margin: 15px;
+}
+.packageh2 {
+    margin: 0;
+        text-align: center;
+        color: black;
+    background-color: rgb(20, 189, 221);border-width: 2;border-color: rgb(90, 112, 0);border-style: solid;border-top-left-radius: 30;border-top-right-radius: 30;padding: 5;border-bottom-width: 1;border-bottom-style: dotted;
+}
+.packageh3 {
+	
+    background-color: gold;border-width: 2;
+    border-color: rgb(90, 112, 0);border-style: solid;
+    border-bottom-left-radius: 10;
+    border-bottom-right-radius: 10;padding: 5;
+    border-top-width: 1;
+    border-top-style: dotted;
+    margin: 0;
+	text-align: center;
+	color: black;
+}
+.label {
+    border: blue;
+    border-width: 2;
+    border-style: solid;
+    border-radius: 50;
+    background-color: cyan;
 }

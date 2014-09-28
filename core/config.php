@@ -97,6 +97,7 @@ $config["paypal"]["Sandbox Email"] = "testpaypal@yourdomain.com";
 $config["paypal"]["Return URL"] = "http://www.yourdomain.com/Thanks/";
 $config["paypal"]["IPN"] = "http://www.yourdomain.com/ipn.php";
 $config["paypal"]["Currency"] = "AUD";
+$config["paypal"]["Symbol"] = "$";
 $config["paypal"]["Community Name"] = "Higher Dimensions Gaming";
 $config["paypal"]["Terms and Conditions"] = "http://www.yourdomain.com/Terms/";
 

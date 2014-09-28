@@ -74,13 +74,13 @@ $ip = $_SERVER['REMOTE_ADDR'];
         || strpos($ua, 'nokia6230i/. fast crawler') !== false;
 ?>
 <html>
+<link href="default.css" rel="stylesheet" type="text/css" />
 	<head>
 		<title>Test</title>
 	</head>
-	<body>
+	<body bgcolor="tan">
 		<div style="margin-top:3px;">
-			<p>
-				<div class="donationform">
+				<div class="donationform" style="text-align:center;">
 					<form name="_xclick" action="<?php echo $paypalurl; ?>" method="post"> 
 					
 						<input name="cmd" value="_xclick" type="hidden" /> 
@@ -90,27 +90,37 @@ $ip = $_SERVER['REMOTE_ADDR'];
 						<input name="return" value="<?php echo $config["paypal"]["Return URL"]; ?>" type="hidden" />
 						<input type="hidden" name="rm" value="2" /> 
 						<input type="hidden" name="notify_url"value="<?php echo $config["paypal"]["IPN"]; ?>" />
-						<input name="cn" value="Comments" type="hidden" /> 
+						<input name="cn" value="Comments" type="hidden" />
+						<input name="co" value="This is a donation for <?php echo $config["emails"]["Community Name"]; ?>, automatically processed at <?php $config["emails"]["Website"]; ?>. This donation earns various rewards at the aforementioned site for the payer, however all rewards are non-tangible and therefore not eligible for refund according to PayPal's Terms of Service." type="hidden" />
 						<input name="currency_code" value="<?php echo $config["paypal"]["Currency"]; ?>" type="hidden" />
 						<input name="tax" value="0" type="hidden" /> 
 						<input name="lc" value="GB" type="hidden" />					
-						<p>
-							Packages
-						</p>
+						<h1 class="label">Packages</h1>
+						<br><br>
+						<table align='center' style="text-align:center;">
 						<?php
-						foreach($config["packages"]["Package"] as $package => $val)
+						require "./core/settings.php";
+						$db = mysqli_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword'],$setting['dbname']);
+						$query = "SELECT * FROM packages";
+						$action = mysqli_query($db, $query);
+						$result = mysqli_fetch_all($action);
+						foreach($result as $package => $val)
 						{
 							$i++;
 							if($i == 1)
 							{
-								echo "<input type=\"radio\" id=\"cost".$i."\" name=\"amount\" value=\"".$val["Price"]."\" checked>".$val["Name"]." ($".$val["Price"]." ".$val["Currency"].")<br>";
-							} 
-							else 
+								echo "<tr>";
+								//echo "<input type=\"radio\" id=\"cost".$i."\" name=\"amount\" value=\"".$val["Price"]."\" checked>".$val["Name"]." ($".$val["Price"]." ".$val["Currency"].")<br>";
+							}
+							echo "<td><h2 class=\"packageh2\">{$val[1]}<div class=\"package\">{$val[2]}</div></h2><h3 class=\"packageh3\">{$config['paypal']['Symbol']}{$val[3]} {$config['paypal']['Currency']}<br><input type=\"radio\" id=\"cost{$val[0]}\" name=\"amount\" value=\"{$val[3]}\"></h3></td>";							
+							if($i == 5)
 							{
-								echo "<input type=\"radio\" id=\"cost".$i."\" name=\"amount\" value=\"".$val["Price"]."\">".$val["Name"]." ($".$val["Price"]." ".$val["Currency"].")<br>";
+								echo "</tr>";
+								$i = 0;
+								//echo "<input type=\"radio\" id=\"cost".$i."\" name=\"amount\" value=\"".$val["Price"]."\">".$val["Name"]." ($".$val["Price"]." ".$val["Currency"].")<br>";
 							}
 						}
-											
+						echo "</table>";
 						$steam_login_verify = SteamSignIn::validate();
 						if(!empty($steam_login_verify))
 						{
@@ -119,14 +129,14 @@ $ip = $_SERVER['REMOTE_ADDR'];
 							$steamID = GetSteamNorm($steam_login_verify); //Get normal steamID		
 							$friendlyName = $steam->getFriendlyName();  //Get players ingame name.	
 									
-							echo "<a href=\"".$steam_sign_in_url."\"><img src=\"http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_small.png\" /></a>";
-							echo "<p> Successfully grabbed your details!</p>";
-							echo "<input type=\"hidden\" name=\"on2\" value=\"Email Address\" maxlength=\"200\">Email Address:";
-							echo "<input type=\"text\" id=\"emaildonate\" name=\"os2\" value=\"\"><br>";
-							echo "<input type=\"hidden\" name=\"on0\" value=\"In-Game Name\" maxlength=\"200\">In-Game Name:"; // The player who donated\"s name, for your reference
-							echo "<input type=\"text\" id=\"namedonate\"  name=\"os0\" value=\"".$friendlyName."\" readonly><br>"; //leave the name as "os0" players name is sent to paypal and used in the ipn script -->
-							echo "<input type=\"hidden\" name=\"on1\" value=\"SteamID\" maxlength=\"200\">(STEAM_x:x:xxxxxxxx) SteamID: "; //The Players steamID, a correct ID is needed to apply the rank to the right person-->
-							echo "<input type=\"text\" id=\"siddonate\"  name=\"os1\" value=\"".$steamID."\" readonly><br>"; // Leave the name as "os1" this is also sent to paypal and used in the ipn script. -->								
+							echo "<a href=\"{$steam_sign_in_url}\"><img src=\"http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_small.png\" /></a>
+							<p> Successfully grabbed your details!</p>
+							<input type=\"hidden\" name=\"on2\" value=\"Email Address\" maxlength=\"200\">Email Address:
+							<input type=\"text\" id=\"emaildonate\" name=\"os2\" value=\"\"><br>
+							<input type=\"hidden\" name=\"on0\" value=\"In-Game Name\" maxlength=\"200\">In-Game Name:
+							<input type=\"text\" id=\"namedonate\"  name=\"os0\" value=\"{$friendlyName}\" readonly><br>
+							<input type=\"hidden\" name=\"on1\" value=\"SteamID\" maxlength=\"200\">(STEAM_x:x:xxxxxxxx) SteamID: 
+							<input type=\"text\" id=\"siddonate\"  name=\"os1\" value=\"{$steamID}\" readonly><br>";							
 						}
 						else
 						{
