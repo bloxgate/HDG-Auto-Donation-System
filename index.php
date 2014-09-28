@@ -24,6 +24,7 @@ define('IS_INTERNAL',true);
 require("core/config.php");
 require("core/steamapiv2.class.php");
 require("core/steamlogin.php");
+error_reporting(~E_ALL);
 
 function GetSteamNorm($Steam64){
 	$authserver = bcsub( $Steam64, '76561197960265728' ) & 1;
@@ -82,6 +83,7 @@ $ip = $_SERVER['REMOTE_ADDR'];
 		<div style="margin-top:3px;">
 				<div class="donationform" style="text-align:center;">
 					<form name="_xclick" action="<?php echo $paypalurl; ?>" method="post"> 
+						
 					
 						<input name="cmd" value="_xclick" type="hidden" /> 
 						<input name="business" value="<?php echo $paypalemail;?>" type="hidden" />
@@ -121,6 +123,7 @@ $ip = $_SERVER['REMOTE_ADDR'];
 							}
 						}
 						echo "</table>";
+						echo "<br><br><table align=\"center\"><tr><td width=\"50%\" style=\"background-color: rgb(0, 224, 255);border: blue;border-width: 2;border-style: solid;border-radius: 50;border-right-style: dotted;border-top-right-radius: 0;border-bottom-right-radius: 0;\" align=\"center\">";
 						$steam_login_verify = SteamSignIn::validate();
 						if(!empty($steam_login_verify))
 						{
@@ -130,29 +133,30 @@ $ip = $_SERVER['REMOTE_ADDR'];
 							$friendlyName = $steam->getFriendlyName();  //Get players ingame name.	
 									
 							echo "<a href=\"{$steam_sign_in_url}\"><img src=\"http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_small.png\" /></a>
-							<p> Successfully grabbed your details!</p>
+							<p> Successfully grabbed your details!</p></td><td width=\"50%\" style=\"background-color: rgb(0,224,255);border: blue;border-width: 2;border-style: solid;border-radius: 50;border-;border-left-style: dotted;border-top-left-radius: 0;border-bottom-left-radius: 0;\" align=\"center\">
 							<input type=\"hidden\" name=\"on2\" value=\"Email Address\" maxlength=\"200\">Email Address:
 							<input type=\"text\" id=\"emaildonate\" name=\"os2\" value=\"\"><br>
 							<input type=\"hidden\" name=\"on0\" value=\"In-Game Name\" maxlength=\"200\">In-Game Name:
 							<input type=\"text\" id=\"namedonate\"  name=\"os0\" value=\"{$friendlyName}\" readonly><br>
-							<input type=\"hidden\" name=\"on1\" value=\"SteamID\" maxlength=\"200\">(STEAM_x:x:xxxxxxxx) SteamID: 
+							<input type=\"hidden\" name=\"on1\" value=\"SteamID\" maxlength=\"200\">SteamID: 
 							<input type=\"text\" id=\"siddonate\"  name=\"os1\" value=\"{$steamID}\" readonly><br>";							
 						}
 						else
 						{
 							$steam_sign_in_url = SteamSignIn::genUrl();
-							echo "<a href=\"".$steam_sign_in_url."\"><img src=\"http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_small.png\" /></a>";
-							echo "<p> Sign in through Steam to automatically fill in your details.</p>";
-							echo "<input type=\"hidden\" name=\"on2\" value=\"Email Address\" maxlength=\"200\">Email Address:";
-							echo "<input type=\"text\" id=\"emaildonate\" name=\"os2\" value=\"\"><br>";
-							echo "<input type=\"hidden\" name=\"on0\" value=\"In-Game Name\" maxlength=\"200\">In-Game Name:"; // The player who donated\"s name, for your reference
-							echo "<input type=\"text\" id=\"namedonate\"  name=\"os0\" value=\"\"><br>"; //leave the name as "os0" players name is sent to paypal and used in the ipn script -->
-							echo "<font color=\"#ff0000\">*</font><input type=\"hidden\" name=\"on1\" value=\"SteamID\" maxlength=\"200\"  >(STEAM_x:x:xxxxxxxx) SteamID: "; //The Players steamID, a correct ID is needed to apply the rank to the right person-->
-							echo "<input type=\"text\" id=\"siddonate\"  name=\"os1\" value=\"\"><br>"; // Leave the name as "os1" this is also sent to paypal and used in the ipn script. -->	
+							echo "<a href=\"{$steam_sign_in_url}\"><img src=\"http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_small.png\" /></a>
+							<br><br>Sign in through Steam to automatically fill in your details.<br><font size=\"1\"><strong>What do you do with these details?</strong></font>	</td>
+							<td width=\"50%\" style=\"background-color: rgb(0,224,255);border: blue;border-width: 2;border-style: solid;border-radius: 50;border-;border-left-style: dotted;border-top-left-radius: 0;border-bottom-left-radius: 0;\" align=\"center\">
+							<table><tr><td><input type=\"hidden\" name=\"on2\" value=\"Email Address\" maxlength=\"200\">Email Address:<br>
+							<input type=\"hidden\" name=\"on0\" value=\"In-Game Name\" maxlength=\"200\">In-Game Name:<br>
+							<font color=\"#ff0000\">*</font><input type=\"hidden\" name=\"on1\" value=\"SteamID\" maxlength=\"200\"  >SteamID:</td><td>
+							<input type=\"text\" id=\"emaildonate\" name=\"os2\" value=\"\"><br>
+							<input type=\"text\" id=\"namedonate\"  name=\"os0\" value=\"\"><br>
+							<input type=\"text\" id=\"siddonate\"  name=\"os1\" value=\"\"></td></tr></table>";
 						}
 						?>
-						<input type="image" src="./images/paypal-donate.gif" border="0" name="submit" id="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" /><br>
-						<input type="submit" name="submit" id="submit" />
+						</tr></table>
+						<input style="background-color: rgb(0,224,255);border: blue;border-width: 2;border-style: solid;border-radius: 25;border-;border-top-style: dotted;border-top-left-radius: 0;border-top-right-radius: 0;padding: 5;" class="donatebutton" type="image" src="./images/paypal-donate.gif" border="0" name="submit" id="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" /><br>
 					</form>
 				</div>
 			</p>

@@ -30,6 +30,22 @@ else
 </head>
 <body>
 <?php
+function encrypt($pure_string) {
+	require "../core/settings.php";
+	$encryption_key = $setting['encryptionkey'];
+    $iv_size = mcrypt_get_iv_size(MCRYPT_BLOWFISH, MCRYPT_MODE_ECB);
+    $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+    $encrypted_string = mcrypt_encrypt(MCRYPT_BLOWFISH, $encryption_key, utf8_encode($pure_string), MCRYPT_MODE_ECB, $iv);
+    return $encrypted_string;
+}
+function decrypt($encrypted_string) {
+	require "../core/settings.php";
+	$encryption_key = $setting['encryptionkey'];
+    $iv_size = mcrypt_get_iv_size(MCRYPT_BLOWFISH, MCRYPT_MODE_ECB);
+    $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+    $decrypted_string = mcrypt_decrypt(MCRYPT_BLOWFISH, $encryption_key, $encrypted_string, MCRYPT_MODE_ECB, $iv);
+    return $decrypted_string;
+}
 
 if (isset($_GET["x"])) 
 {
@@ -39,9 +55,9 @@ if (isset($_GET["x"]))
 	{
 		packages();
 	}
-	elseif($x[0] == "paypal")
+	elseif($x[0] == "servers")
 	{
-		paypal();
+		servers();
 	}
 	elseif($x[0] == "home")
 	{
@@ -50,6 +66,10 @@ if (isset($_GET["x"]))
 	elseif($x[0] == "accounts")
 	{
 		accounts();
+	}
+	elseif($x[0] == "config")
+	{
+		config();
 	}
 	elseif($x[0] == "logout")
 	{
@@ -78,6 +98,17 @@ function menu()
 		echo "white";
 	}
 	echo '>Home</font></a></center><br>';
+		
+	echo '<br><center><a href="admin.php?x=servers"><font color=';
+	if($_GET['x'] == "servers")
+	{
+		echo "orange";
+	}
+	else
+	{
+		echo "white";
+	}
+	echo '>Servers</font></a></center><br>';
 
 	echo '<br><center><a href="admin.php?x=packages"><font color=';
 	if($_GET['x'] == "packages")
@@ -90,18 +121,7 @@ function menu()
 	}
 	echo '>Packages</font></a></center><br>';
 	
-	echo '<br><center><a href="admin.php?x=paypal"><font color=';
-	if($_GET['x'] == "paypal")
-	{
-		echo "orange";
-	}
-	else
-	{
-		echo "white";
-	}
-	echo '>Paypal</font></a></center><br>';
-	
-	echo '<br><center><a href="admin.php?x=accounts"><font color=';
+		echo '<br><center><a href="admin.php?x=accounts"><font color=';
 	if($_GET['x'] == "accounts")
 	{
 		echo "orange";
@@ -111,10 +131,21 @@ function menu()
 		echo "white";
 	}
 	echo '>Accounts</font></a></center><br>';
+	
+	echo '<br><center><a href="admin.php?x=config"><font color=';
+	if($_GET['x'] == "config")
+	{
+		echo "orange";
+	}
+	else
+	{
+		echo "white";
+	}
+	echo '>Configuration</font></a></center><br>';
 
 	echo '<br><center><a href="admin.php?x=logout"><font color=white>Log Out</font></a></center><br></div>';
 }
-//Main Admin Homepage
+
 function home()
 {
 	
@@ -123,8 +154,6 @@ function home()
 	echo "Welcome to your control panel, <strong>{$_COOKIE['user_username']}</strong>. Click a link on the left side to continue.<br><br>";
 }
  
- 
-//A Blank second page
 function packages()
 {
 	menu();
@@ -331,10 +360,136 @@ function accounts_go()
 	echo "</strong></font></h3><br><br>";
 	
 }
-function paypal()
+function config()
 {
 menu();
-echo '<div id="adminright"><center><h1>Paypal</h1><br><br>';
+echo '<div id="adminright"><center><h1>Configuration</h1><br><br>';
+}
+
+function servers()
+{
+menu();
+echo'<div id="adminright"><center><h1>Servers</h1><br><br>';
+if(isset($_POST['id']))
+	{
+		servers_go();
+	}
+	require "../core/settings.php";
+	$db = mysqli_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword'],$setting['dbname']);
+	$query = "SELECT * FROM admin WHERE id='{$_COOKIE['user_id']}' AND username='{$_COOKIE['user_username']}'";
+	$oresult=mysqli_query($db, $query);
+	$result=mysqli_fetch_row($oresult);
+	
+	if($result[4] == "1")
+	{
+		$db = mysqli_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword'],$setting['dbname']);
+		$query2 = "SELECT * FROM servers";
+		$end = mysqli_query($db, $query2);
+		$end1 = mysqli_fetch_all($end);
+		echo "<hr><h3><font color=\"green\">Access Granted</font></h3><table>
+		<tr><td><b>ID</b></td><td><b>Active</b></td><td><b>IP</b></td><td><b>Port</b></td><td><b>Rcon Password</b></td><td>Server Name</td><td>Command to Ban</td><td></td></tr>";
+		foreach($end1 as $key => $val)
+		{
+			$rcon = decrypt($val[4]);
+			$active;
+			if($val[1] == "1"){
+				$active = true;
+			}
+			else
+			{
+				$active = false;
+			}
+			echo "
+				<form action=\"admin.php?x=servers\" method=\"post\">
+				<input type=\"text\" name=\"fuckingautofill\" style=\"display:none\"> <!-- This serves no purpose other than making chome shag itself -->
+				<input type=\"password\" name=\"fuckingautofill2\" style=\"display:none\">
+				<tr><td><input type=\"hidden\" name=\"id\" value=\"{$val[0]}\">{$val[0]}</td>
+				<td><input type=\"checkbox\" name=\"active\" checked=\"{$active}\"></td>
+				<td><input type=\"text\" name=\"ip\" value=\"{$val[2]}\"></td>
+				<td><input type=\"text\" name=\"port\" value=\"{$val[3]}\"></td>
+				<td><input type=\"text\" name=\"rcon\" value=\"{$rcon}\"></td>
+				<td><input type=\"text\" name=\"name\" value=\"{$val[5]}\"></td>
+				<td><input type=\"text\" name=\"ban\" value=\"{$val[6]}\"></td>
+				<td><input type=\"submit\" name=\"submit\" value=\"Submit\"><input type=\"submit\" name=\"delete\" value=\"Delete\"></td>
+				</tr></form>";
+		}
+		echo "
+			<form action=\"admin.php?x=servers\" method=\"post\">
+			<input type=\"text\" name=\"fuckingautofill\" style=\"display:none\"> <!-- This serves no purpose other than making chome shag itself -->
+			<input type=\"password\" name=\"fuckingautofill2\" style=\"display:none\">
+				<tr><td><input type=\"hidden\" name=\"id\" value=\"NEW\">NEW ACCOUNT</td>
+				<td><input type=\"checkbox\" name=\"active\"></td>
+				<td><input type=\"text\" name=\"ip\"></td>
+				<td><input type=\"text\" name=\"port\"></td>
+				<td><input type=\"text\" name=\"rcon\"></td>
+				<td><input type=\"text\" name=\"name\"></td>
+				<td><input type=\"text\" name=\"ban\"></td>
+			<td><input type=\"submit\" name=\"submit\" value=\"Submit\"></td>
+			</tr></form>";
+		echo '</table>';
+	}
+	else
+	{
+		echo "<h3><font color=\"red\">Access Denied<br>You do not have permission to view/edit server details!</font></h3>";
+	}
+}
+function servers_go()
+{
+echo "<h3><font color=red><strong>"; // Get the admin's attention.
+	require "../core/settings.php";
+	$db = mysqli_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword'],$setting['dbname']);
+	// Verify that this user is editing a valid server
+	$query = "SELECT * FROM admin WHERE id='{$_COOKIE['user_id']}' AND username='{$_COOKIE['user_username']}'";
+	$result = mysqli_query($db,$query);
+	$user = mysqli_fetch_row($result);
+	if($user[4] == "1") 
+	{
+		if($_POST['id'] != "NEW" && $_POST['delete'] != "Delete")
+		{
+			$active;
+			if($_POST['active'])
+			{
+				$active = "1";
+			}
+			else
+			{
+				$active = "0";
+			}
+			$rcon = encrypt($_POST['rcon']);
+			$query = "UPDATE servers SET `active` = '{$active}', `ip` = '{$_POST['ip']}', `port` = '{$_POST['port']}', `rcon` = '{$rcon}', `name` = '{$_POST['name']}', `ban` = '{$_POST['ban']}' WHERE `id` = {$_POST['id']};";
+			$result = mysqli_query($db,$query);
+			echo "Success! Server ID #{$_POST['id']} updated!";
+		}
+		elseif($_POST['delete'] == "Delete")
+		{
+			$query = "DELETE FROM servers WHERE `id` = {$_POST['id']}";
+			$result = mysqli_query($db,$query);
+			echo "Server ID #{$_POST['id']} has been deleted!";
+		}
+		elseif($_POST['id'] == "NEW")
+		{
+			$active;
+			if($_POST['active'])
+			{
+				$active = "1";
+			}
+			else
+			{
+				$active = "0";
+			}
+			$rcon = encrypt($_POST['rcon']);
+			$query = "INSERT INTO servers (`active`, `ip`, `port`, `rcon`,`name`,`ban`) VALUES ({$active}, '{$_POST['ip']}', '{$_POST['port']}', '{$rcon}', '{$_POST['name']}', '{$_POST['ban']}');";
+			$result = mysqli_query($db,$query);
+			echo "A new server was successfully created!";
+		}
+	}
+	else
+	{
+		// User is probably non-root and is trying to edit a profile he shouldnt be.
+		echo "An unknown error has occured!"; // Lower admins don't need to know about root.
+	}
+	
+	echo "</strong></font></h3><br><br>";
 }
 echo '</center></div></div>';
 ?>

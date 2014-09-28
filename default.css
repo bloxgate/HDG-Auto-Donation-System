@@ -130,5 +130,5 @@ input[type="password"]
     border-width: 2;
     border-style: solid;
     border-radius: 50;
-    background-color: cyan;
+    background-color: rgb(0,224,255);
 }
