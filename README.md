@@ -4,7 +4,7 @@
 ### Description:
 HDG Auto Donation System is an innovation in Garry's Mod auto-donation systems. Provided free, this software is designed to suit almost any GMOD community, and their individual needs for donation processing.
 
-Despite being in a very early stage of development, this system is supposed to fit all sizes. Whether you run a top ranking Garry's Mod community with 50 odd servers with several gamemodes and voice servers, or just host a single DarkRP server, this donation system is designed to work for your needs.
+Despite being in a very early stage of development, this system is supposed to fit all sizes. Whether you run a top ranking Garry's Mod community with 50 odd servers with several gamemodes and voice servers, or just host a single sandbox server, this donation system is designed to work for your needs.
 
 This system currently contains the following features.
 
@@ -23,7 +23,8 @@ Future planned features:
 * Compatibility with different payment processors. (Other than PayPal).
 * Multiple TeamSpeak servers
 * Multiple Voice server types.
-* Compatibility with more package types (DarkRP money, Server Ranks, etc etc)
+* Compatibility with more package types (An in-game economy, Server Ranks, etc etc)
+* Fully functioning Admin CP
 * And lots more!
 
 This donation system is an official product of Higher Dimensions Gaming.
@@ -41,7 +42,8 @@ A ticked box means its fixed.
 - [ ] Forum Query system untested, not sure if functioning at all.
   - [x] Test the actual MySQL queries. (They work. ~Scorn)
 - [ ] Email template system untested, not sure if functioning at all.
-- [ ] Install script isn't finished
+- [x] Install script is working!
+  - [ ] It could still be improved.
 - [ ] Admin CP isn't finished
 - [ ] Settings and Configs have not been moved to a MySQL based system
 
@@ -49,8 +51,8 @@ A ticked box means its fixed.
 
 | Name | Contributions |
 | ---------- | ---------- |
-| FIG-Scorn | Initial Creation of the system |
-| [HDG] Faerachnidendro | Assistance in the initial development process |
+| FIG-Scorn | Initial Creation and Development of the software |
+| [HDG] Faerachnidendro | Assistance in the initial development process and being edgy about the description wording |
 | Micah Carrick | Authoring paypal.class.php |
 | Rob McFadzean | Authoring steamapiv2.class.php |
 | ScP | Author of the TeamSpeak 3 library |
