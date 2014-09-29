@@ -24,106 +24,78 @@ define('IS_INTERNAL',true);
 require "paypal.class.php";
 require "rcon_code.php";
 require "config.php";
+require "settings.php";
 require "../libraries/TeamSpeak3/TeamSpeak3.php";
 require "forumquery.php";
 	
 $p = new paypal_class;
-if($config["paypal"]["Sandbox Mode"])
+if($config['payment']['sandbox'])
 {
-	$p->paypal_url = $config["paypal"]["Sandbox API Link"];
+	$p->paypal_url = $config['payment']['sandbox_api'];
 }
 else
 {
-	$p->paypal_url = $config["paypal"]["API Link"];
+	$p->paypal_url = $config['payment']['api'];
 }
-function WrtiteLog($type, $line)
+function WrtiteLog($line)
 {
 	if($config["logs"]["Is Used"])
 	{
-		if($type == "IPN")
+		if(!file_exists("../logs/log_".date($config['logs']['date']).".txt")
 		{
-			//$file = $config["logs"]["Generic Logs Path"].'log.txt';
-			if(!file_exists($config["logs"]["IPN Logs File"]."_".date($config["logs"]["Date Format"] = "d-m-Y").".txt")
-			{
-				fopen($config["logs"]["IPN Logs File"]."_".date($config["logs"]["Date Format"] = "d-m-Y").".txt", 'w');
-				fclose($config["logs"]["IPN Logs File"]."_".date($config["logs"]["Date Format"] = "d-m-Y").".txt");
-				file_put_contents($config["logs"]["IPN Logs File"]."_".date($config["logs"]["Date Format"] = "d-m-Y").".txt", date($config["logs"]["Time Format"]).": Log file created!");
-			}
-			$old = file_get_contents($config["logs"]["IPN Logs File"]."_".date($config["logs"]["Date Format"] = "d-m-Y").".txt");
-			$new = $old."\n".$line;
-			file_put_contents($config["logs"]["IPN Logs File"]."_".date($config["logs"]["Date Format"] = "d-m-Y").".txt", $new);
+			fopen("../logs/log_".date($config['logs']['date']).".txt", 'w');
+			fclose("../logs/log_".date($config['logs']['date']).".txt");
+			file_put_contents("../logs/log_".date($config['logs']['date']).".txt", date($config['logs']['time']).": Log file created!");
 		}
-		if($type == "GEN")
-		{
-			if(!file_exists($config["logs"]["Generic Logs File"]."_".date($config["logs"]["Date Format"] = "d-m-Y").".txt")
-			{
-				fopen($config["logs"]["Generic Logs File"]."_".date($config["logs"]["Date Format"] = "d-m-Y").".txt", 'w');
-				fclose($config["logs"]["Generic Logs File"]."_".date($config["logs"]["Date Format"] = "d-m-Y").".txt");
-				file_put_contents($config["logs"]["Generic Logs File"]."_".date($config["logs"]["Date Format"] = "d-m-Y").".txt", date($config["logs"]["Time Format"]).": Log file created!");
-			}
-			$old = file_get_contents($config["logs"]["Generic Logs File"]."_".date($config["logs"]["Date Format"] = "d-m-Y").".txt");
-			$new = $old."\n".$line;
-			file_put_contents($config["logs"]["Generic Logs File"]."_".date($config["logs"]["Date Format"] = "d-m-Y").".txt", $new);
-		}
+		$old = file_get_contents("../logs/log_".date($config['logs']['date']).".txt");
+		$new = $old."\n".$line;
+		file_put_contents("../logs/log_".date($config['logs']['date']).".txt", $new);
 	}
 }
 //Database stuff
-if($config["database"]["Is Used"])
-{	 
-	$db=mysqli_connect($config["database"]["Host"],$config["database"]["Username"],$config["database"]["Password"],$config["database"]["Database Name"]);
-	$current = "Connected to database at ".$config["database"]["Host"]." using password ";
-	if($config["database"]["Password"])
-	{
-		$current .= "YES";
-	}
-	else
-	{
-		$current .= "NO";
-	}
-	WriteLog("GEN", $current);
-	// Check connection
-	if (mysqli_connect_errno($db))
-	{
-		echo "Failed to connect to MySQL: " . mysqli_connect_error();
-		WriteLog("GEN", "Failed to connect to database: ".mysqli_connect_error());
-	} 
-	$config["database"]["Table"] = mysqli_real_escape_string($db, $config["database"]["Table"]);
-	$result = mysqli_query($db,"SHOW TABLES LIKE '".$config["database"]["Table"]."'");
-	if (!$result)
-	{
-		WriteLog("GEN", 'Error: '.mysqli_error($db).'. Please correct or disable your database configuration.');
-		die("A fatal error has occured. Please refer to ".$config["logs"]["Generic Logs File"]."_".date($config["logs"]["Date Format"] = "d-m-Y").".txt"." for more information.");
-	}
-	$tableExists = mysqli_num_rows($result) > 0;
-		
-	if($tableExists)
-	{
-		//connect to the table
-		WriteLog("GEN", "Table exists, Connecting to table.");
-		mysqli_select_db($db, $config["database"]["Table"]);
-	}
-	else
-	{
-		//Create table
-		WriteLog("GEN", "Table does not exist, creating table.");
-		$sql = "CREATE TABLE ".$config["database"]["Table"]." 
-		(
-		PID INT NOT NULL AUTO_INCREMENT, 
-		PRIMARY KEY(PID),
-		email VARCHAR(250),
-		steamid VARCHAR(250),
-		name VARCHAR(250),
-		rank VARCHAR(250),
-		amount VARCHAR(250)
-		)";
-		mysqli_query($db,$sql);	
-		mysqli_select_db($db, $config["database"]["Table"]);
-	}	
+$db = mysqli_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword'],$setting['dbname']);
+$current = "Connected to database at {$setting['dbip']} using password ";
+if($setting['dbpassword'])
+{
+	$current .= "YES";
 }
-		
+else
+{
+	$current .= "NO";
+}
+WriteLog($current);
+// Check connection
+if (mysqli_connect_errno($db))
+{
+	echo "Failed to connect to MySQL: " . mysqli_connect_error();
+	WriteLog("Failed to connect to database: ".mysqli_connect_error());
+} 
+$table = mysqli_real_escape_string($db, "donations");
+$result = mysqli_query($db,"SHOW TABLES LIKE '{$table}'");
+if (!$result)
+{
+	WriteLog('Error: '.mysqli_error($db).'. Please correct or disable your database configuration.');
+	die("A fatal error has occured. Please refer to /logs/log_".date($config['logs']['date']).".txt"." for more information.");
+}
+$tableExists = mysqli_num_rows($result) > 0;
+	
+if($tableExists)
+{
+	//connect to the table
+	WriteLog("Table exists, Connecting to table.");
+	mysqli_select_db($db, $table);
+}
+else
+{
+	//Create table
+	WriteLog("Table does not exist.");
+	die("Logs cannot be recorded, table doesn't exist!");
+}	
+
+	
 if ($p->validate_ipn())
 {
-	WriteLog("GEN", "IPN Validated.");
+	WriteLog("IPN Validated.");
 	$fee = $p->ipn_data['mc_gross'];
 	$email = $p->ipn_data['payer_email']; 
 	$name = $p->ipn_data['option_selection1'];
@@ -133,63 +105,32 @@ if ($p->validate_ipn())
 	{
 		$remail = $email;
 	}
-		
-		/*if (is_array($prices)){
-			foreach($prices as $key => $val){
-					$i++;
-					if($val == $fee){
-						$rank = $ranks[$i - 1];
-						$command = $commands[$i - 1] .' '. $steamid.' '.$rank;
-						$forumrank = $forumranks[$i - 1];
-						$ts3rank = $ts3ranks[$i - 1];
-					}
-			}
-		} else {
-			$current .='$prices is an not array.\n';
-			file_put_contents($file, $current);
-		}
-		We know its a fucking array.
-		*/
 	$selectedpackage;
 	$nicetry;
-	if($config["packages"]["Is Used"])
+	$query = "SELECT * FROM packages";
+	$action = mysqli_query($db,$query);
+	$result = mysqli_fetch_all($action);
+	foreach($result as $package => $val)
 	{
-		foreach($config["packages"]["Package"] as $package => $val)
+		if($val['price'] == $fee)
 		{
-			if($val["Price"] == $fee)
-			{
-				$selectpackage = $val;
-				$config["packages"]["Package"][$selectedpackage]["RunCommand"] = $val["Command"].' '.$steamid.' '.$val["Rank"];
-				$rank = $val["Rank"]; // I'll fucking kick myself for this.
-			}
-		}
-		if(!$selectedpackage)
-		{
-			$nicetry = true;
-			WriteLog("GEN", "WARNING!!! A donation that did not match known packages was detected! Promotion will not occur!");
+			$selectpackage = $val; //TODO: Fix this. Its wrong , I know it.
+			$config["packages"]["Package"][$selectedpackage]["RunCommand"] = $val["Command"].' '.$steamid.' '.$val["Rank"];
+			$rank = $val["Rank"]; // I'll fucking kick myself for this.
 		}
 	}
-	else
+	if(!$selectedpackage)
 	{
-		if($fee != $config["packages"]["No Package"]["Price"])
-		{
-			$nicetry = true;
-			WriteLog("GEN", "WARNING!!! A donation that did not match known packages was detected! Promotion will not occur!");
-		}
-		else
-		{
-			$selectedpackage = "None";
-			$config["packages"]["No Package"]["RunCommand"] = $config["packages"]["No Package"]["Command"].' '.$steamid.' '.$config["packages"]["No Package"]["Rank"];
-			$rank = $config["packages"]["No Package"]["Rank"];
-		}
-	}			
+		$nicetry = true;
+		WriteLog("WARNING!!! A donation that did not match known packages was detected! Promotion will not occur!");
+	}
 	if(is_array($selectedpackage) && !$nicetry)
 	{
-		WriteLog("GEN", "Donation incoming:\nEmail: "$email.'\nName: '.$name.'\nAmmount: '.$fee .'\nSteam ID: '.$steamid.'\nRank '.$config["packages"]["Package"][$selectedpackage]["Rank"]);
+		WriteLog("Donation incoming:\nEmail: "$email.'\nName: '.$name.'\nAmmount: '.$fee .'\nSteam ID: '.$steamid.'\nRank '.$config["packages"]["Package"][$selectedpackage]["Rank"]);
 	}
 	elseif(!is_array($selectedpackage) && !$nicetry)
 	{
-		WriteLog("GEN", "Donation incoming:\nEmail: "$email.'\nName: '.$name.'\nAmmount: '.$fee .'\nSteam ID: '.$steamid.'\nRank '.$config["packages"]["No Package"]["Rank"]);
+		WriteLog("Donation incoming:\nEmail: "$email.'\nName: '.$name.'\nAmmount: '.$fee .'\nSteam ID: '.$steamid.'\nRank '.$config["packages"]["No Package"]["Rank"]);
 	}
 		
 		//Add user donation to database.
@@ -198,17 +139,17 @@ if ($p->validate_ipn())
 		$sql
 		if(is_array($selectedpackage) && !$nicetry)
 		{
-			$sql = 	'INSERT INTO '.$config["database"]["Table"].' VALUES (NULL , "'.mysqli_real_escape_string($db, $email).'", "'.mysqli_real_escape_string($db, $steamid).'", "'.mysqli_real_escape_string($db, $name).'", "'.mysqli_real_escape_string($db, $config["packages"]["Package"][$selectedpackage]["Rank"]).'" , "'.mysqli_real_escape_string($db, $fee).'")';
+			$sql = 	'INSERT INTO donations VALUES (NULL , "'.mysqli_real_escape_string($db, $email).'", "'.mysqli_real_escape_string($db, $steamid).'", "'.mysqli_real_escape_string($db, $name).'", "'.mysqli_real_escape_string($db, $config["packages"]["Package"][$selectedpackage]["Rank"]).'" , "'.mysqli_real_escape_string($db, $fee).'")';
 		}
 		elseif(!is_array($selectedpackage) && !$nicetry)
 		{
-			$sql = 	'INSERT INTO '.$config["database"]["Table"].' VALUES (NULL , "'.mysqli_real_escape_string($db, $email).'", "'.mysqli_real_escape_string($db, $steamid).'", "'.mysqli_real_escape_string($db, $name).'", "'.mysqli_real_escape_string($db, $config["packages"]["No Package"]]["Rank"]).'" , "'.mysqli_real_escape_string($db, $fee).'")';
+			$sql = 	'INSERT INTO donations VALUES (NULL , "'.mysqli_real_escape_string($db, $email).'", "'.mysqli_real_escape_string($db, $steamid).'", "'.mysqli_real_escape_string($db, $name).'", "'.mysqli_real_escape_string($db, $config["packages"]["No Package"]]["Rank"]).'" , "'.mysqli_real_escape_string($db, $fee).'")';
 		}elseif($nicetry)
 		{
-			$sql = 	'INSERT INTO '.$config["database"]["Table"].' VALUES (NULL , "'.mysqli_real_escape_string($db, $email).'", "'.mysqli_real_escape_string($db, $steamid).'", "'.mysqli_real_escape_string($db, $name).'", "'.mysqli_real_escape_string($db, "INVALID DONATION").'" , "'.mysqli_real_escape_string($db, $fee).'")';
+			$sql = 	'INSERT INTO donations VALUES (NULL , "'.mysqli_real_escape_string($db, $email).'", "'.mysqli_real_escape_string($db, $steamid).'", "'.mysqli_real_escape_string($db, $name).'", "'.mysqli_real_escape_string($db, "INVALID DONATION").'" , "'.mysqli_real_escape_string($db, $fee).'")';
 		}
 		mysqli_query($db,$sql);	
-		WriteLog("GEN", "Added to database.";		
+		WriteLog("Added to database.";		
 	}
 	if($config["rcon"]["Is Used"])
 	{
@@ -220,15 +161,15 @@ if ($p->validate_ipn())
 				if(is_array($selectedpackage) && !$nicetry)
 				{
 					$OUTPUT = $srcds_rcon->rcon_command($SERVER["IP"], $SERVER["Port"], $SERVER["Rcon Password"], $config["packages"]["Package"][$selectedpackage]["RunCommand"]);
-					WriteLog("GEN", 'IP: '.$SERVER["IP"].' Port: '.$SERVER["Port"].' Password: HIDDEN Command: '.$command);
+					WriteLog('IP: '.$SERVER["IP"].' Port: '.$SERVER["Port"].' Password: HIDDEN Command: '.$command);
 					if( $OUTPUT == 'Unable to connect!' || $OUTPUT == '' )
 					{ 
 						if($OUTPUT == "")
 						{
 							$OUTPUT = "No response from server (invalid command?).";
 						}
-						WriteLog("GEN", $OUTPUT);
-						WriteLog("GEN", "Unable to connect to Rcon, please check your configuration. (".$SERVER["IP"].")");
+						WriteLog($OUTPUT);
+						WriteLog("Unable to connect to Rcon, please check your configuration. (".$SERVER["IP"].")");
 						$SERVER["Status"] = $SERVER["Server Name"]." (".$SERVER["IP"].":".$SERVER["Port"].") - Failed: ".$OUTPUT;
 						if(!$failuretopromote)
 						{
