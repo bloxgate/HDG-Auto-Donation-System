@@ -111,24 +111,24 @@ input[type="password"]
     margin: 0;
         text-align: center;
         color: black;
-    background-color: rgb(20, 189, 221);border-width: 2;border-color: rgb(90, 112, 0);border-style: solid;border-top-left-radius: 30;border-top-right-radius: 30;padding: 5;border-bottom-width: 1;border-bottom-style: dotted;
+    background-color: #CDCD96;border-width: 2;border-color: #474E42;border-style: solid;border-top-left-radius: 30;border-top-right-radius: 30;padding: 5;border-bottom-width: 1;border-bottom-style: dotted;
 }
 .packageh3 {
 	
-    background-color: gold;border-width: 2;
-    border-color: rgb(90, 112, 0);border-style: solid;
+    background-color: #555E4F;border-width: 2;
+    border-color: #474E42;border-style: solid;
     border-bottom-left-radius: 10;
     border-bottom-right-radius: 10;padding: 5;
     border-top-width: 1;
     border-top-style: dotted;
     margin: 0;
 	text-align: center;
-	color: black;
+	color: white;
 }
 .label {
-    border: blue;
+    border: #474E42;
     border-width: 2;
     border-style: solid;
     border-radius: 50;
-    background-color: rgb(0,224,255);
+    background-color: #CDCD96;
 }

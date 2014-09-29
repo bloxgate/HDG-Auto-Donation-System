@@ -123,7 +123,7 @@ $ip = $_SERVER['REMOTE_ADDR'];
 							}
 						}
 						echo "</table>";
-						echo "<br><br><table align=\"center\"><tr><td width=\"50%\" style=\"background-color: rgb(0, 224, 255);border: blue;border-width: 2;border-style: solid;border-radius: 50;border-right-style: dotted;border-top-right-radius: 0;border-bottom-right-radius: 0;\" align=\"center\">";
+						echo "<br><br><table align=\"center\"><tr><td width=\"50%\" style=\"background-color: #CDCD96;border: #474E42;border-width: 2;border-style: solid;border-radius: 50;border-right-style: dotted;border-top-right-radius: 0;border-bottom-right-radius: 0;\" align=\"center\">";
 						$steam_login_verify = SteamSignIn::validate();
 						if(!empty($steam_login_verify))
 						{
@@ -133,7 +133,7 @@ $ip = $_SERVER['REMOTE_ADDR'];
 							$friendlyName = $steam->getFriendlyName();  //Get players ingame name.	
 									
 							echo "<a href=\"{$steam_sign_in_url}\"><img src=\"http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_small.png\" /></a>
-							<p> Successfully grabbed your details!</p></td><td width=\"50%\" style=\"background-color: rgb(0,224,255);border: blue;border-width: 2;border-style: solid;border-radius: 50;border-;border-left-style: dotted;border-top-left-radius: 0;border-bottom-left-radius: 0;\" align=\"center\">
+							<p> Successfully grabbed your details!</p></td><td width=\"50%\" style=\"background-color: #CDCD96;border: #474E42;border-width: 2;border-style: solid;border-radius: 50;border-;border-left-style: dotted;border-top-left-radius: 0;border-bottom-left-radius: 0;\" align=\"center\">
 							<input type=\"hidden\" name=\"on2\" value=\"Email Address\" maxlength=\"200\">Email Address:
 							<input type=\"text\" id=\"emaildonate\" name=\"os2\" value=\"\"><br>
 							<input type=\"hidden\" name=\"on0\" value=\"In-Game Name\" maxlength=\"200\">In-Game Name:
@@ -146,7 +146,7 @@ $ip = $_SERVER['REMOTE_ADDR'];
 							$steam_sign_in_url = SteamSignIn::genUrl();
 							echo "<a href=\"{$steam_sign_in_url}\"><img src=\"http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_small.png\" /></a>
 							<br><br>Sign in through Steam to automatically fill in your details.<br><font size=\"1\"><strong>What do you do with these details?</strong></font>	</td>
-							<td width=\"50%\" style=\"background-color: rgb(0,224,255);border: blue;border-width: 2;border-style: solid;border-radius: 50;border-;border-left-style: dotted;border-top-left-radius: 0;border-bottom-left-radius: 0;\" align=\"center\">
+							<td width=\"50%\" style=\"background-color: #CDCD96;border: #474E42;border-width: 2;border-style: solid;border-radius: 50;border-;border-left-style: dotted;border-top-left-radius: 0;border-bottom-left-radius: 0;\" align=\"center\">
 							<table><tr><td><input type=\"hidden\" name=\"on2\" value=\"Email Address\" maxlength=\"200\">Email Address:<br>
 							<input type=\"hidden\" name=\"on0\" value=\"In-Game Name\" maxlength=\"200\">In-Game Name:<br>
 							<font color=\"#ff0000\">*</font><input type=\"hidden\" name=\"on1\" value=\"SteamID\" maxlength=\"200\"  >SteamID:</td><td>
@@ -156,7 +156,7 @@ $ip = $_SERVER['REMOTE_ADDR'];
 						}
 						?>
 						</tr></table>
-						<input style="background-color: rgb(0,224,255);border: blue;border-width: 2;border-style: solid;border-radius: 25;border-;border-top-style: dotted;border-top-left-radius: 0;border-top-right-radius: 0;padding: 5;" class="donatebutton" type="image" src="./images/paypal-donate.gif" border="0" name="submit" id="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" /><br>
+						<input style="background-color: #555E4F;border: #474E42;border-width: 2;border-style: solid;border-radius: 25;border-;border-top-style: dotted;border-top-left-radius: 0;border-top-right-radius: 0;padding: 5;" class="donatebutton" type="image" src="./images/paypal-donate.gif" border="0" name="submit" id="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" /><br>
 					</form>
 				</div>
 			</p>
