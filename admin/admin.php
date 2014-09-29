@@ -207,7 +207,9 @@ function packages_go()
 	// OR the user is a root account, and could be doing anything.
 	if($_POST['id'] != "NEW" && $_POST['delete'] != "Delete")
 	{
-		$query = "UPDATE packages SET `name` = '{$_POST['name']}', `description` = '{$_POST['description']}', `price` = '{$_POST['price']}', `command` = '{$_POST['command']}', `rank` = '{$_POST['rank']}' WHERE `id` = {$_POST['id']};";
+		$description = addslashes($_POST['description']);
+		$name = addslashes($_POST['name']);
+		$query = "UPDATE packages SET `name` = '{$name}', `description` = '{$description}', `price` = '{$_POST['price']}', `command` = '{$_POST['command']}', `rank` = '{$_POST['rank']}' WHERE `id` = {$_POST['id']};";
 		$result = mysqli_query($db,$query);
 		echo "Success! Package \"{$_POST['name']}\" updated!";
 	}
@@ -219,7 +221,9 @@ function packages_go()
 	}
 	elseif($_POST['id'] == "NEW")
 	{
-		$query = "INSERT INTO packages (`name`, `description`, `price`, `command`,`rank`) VALUES ('{$_POST['name']}', '{$_POST['description']}', '{$_POST['price']}', '{$_POST['command']}', '{$_POST['rank']}');";
+		$description = addslashes($_POST['description']);
+		$name = addslashes($_POST['name']);
+		$query = "INSERT INTO packages (`name`, `description`, `price`, `command`,`rank`) VALUES ('{$name}', '{$description}', '{$_POST['price']}', '{$_POST['command']}', '{$_POST['rank']}');";
 		$result = mysqli_query($db,$query);
 		echo "New package \"{$_POST['name']}\" was successfully created!";
 	}
