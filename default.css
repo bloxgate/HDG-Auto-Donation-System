@@ -1,5 +1,5 @@
 body {
-    background-image: url(images/bg.jpg);
+    background-image: url(admin/background.png);
     text-align: justify;
     font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
     font-size: small;
@@ -15,12 +15,12 @@ h1, h2, h3, h4, h5 {
 
 
 a {
-    color: #666666;
+    color: #7AD2F9;
     text-decoration: none;
 }
 
 a:hover {
-    color: #555E4F;
+    color: #1E98D3;
     text-decoration: none;
 }
 
@@ -44,12 +44,12 @@ h2 {
 
 input[type="text"]
 {
-  background-color: #CDBA96
+  background-color: #9DDBF8
 }
 
 input[type="password"]
 {
-  background-color: #CDBA96
+  background-color: #9DDBF8
 }
 
 #fulladmin {
@@ -111,14 +111,26 @@ input[type="password"]
     margin: 0;
         text-align: center;
         color: black;
-    background-color: #CDCD96;border-width: 2;border-color: #474E42;border-style: solid;border-top-left-radius: 30;border-top-right-radius: 30;padding: 5;border-bottom-width: 1;border-bottom-style: dotted;
+    background-color: #E6ECEF;
+border-width: 2;
+border-color: #400758;
+border-style: solid;
+border-top-left-radius: 30;
+border-top-right-radius: 30;
+padding: 5;
+border-bottom-width: 1;
+
+border-bottom-style: dotted;
 }
 .packageh3 {
 	
-    background-color: #555E4F;border-width: 2;
-    border-color: #474E42;border-style: solid;
+    background-color: #6B3792;
+    border-width: 2;
+    border-color: #400758;
+    border-style: solid;
     border-bottom-left-radius: 10;
-    border-bottom-right-radius: 10;padding: 5;
+    border-bottom-right-radius: 10;
+    padding: 5;
     border-top-width: 1;
     border-top-style: dotted;
     margin: 0;
@@ -126,9 +138,73 @@ input[type="password"]
 	color: white;
 }
 .label {
-    border: #474E42;
+    border: #400758;
     border-width: 2;
     border-style: solid;
     border-radius: 50;
-    background-color: #CDCD96;
+    background-color: #6B3792;
+    color: white;
+}
+
+.barleft {
+    background-color: #E6ECEF;
+    border: #400758;
+    border-width: 2;
+    border-style: solid;
+    border-radius: 50;
+    border-right-style: dotted;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.barright {
+    background-color: #E6ECEF;
+    border: #400758;
+    border-width: 2;
+    border-style: solid;
+    border-radius: 50;
+    border-left-style: dotted;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.donatebutton {
+    background-color: #6B3792;
+    border: #400758;
+    border-width: 2;
+    border-style: solid;
+    border-radius: 25;
+    border-top-style: dotted;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    padding: 5;
+}
+.login {
+	border: 2px solid #6B3792;
+	border-radius: 40px;
+}
+.error {
+    background: rgb(255, 167, 167);
+    border: 1px solid red;
+    text-align: center;
+    padding: 5px 20px;
+    font-size: 18px;
+    margin-bottom: 5px;
+    color: rgb(173, 0, 0);
+    margin-left: 20%;
+    margin-right: 20%;
+    border-radius: 30px;
+}
+
+.success {
+    background: rgb(204, 252, 216);
+    border: 1px solid rgb(6, 255, 0);
+    text-align: center;
+    padding: 5px 20px;
+    font-size: 18px;
+    margin-bottom: 5px;
+    color: rgb(41, 98, 40);
+    margin-left: 20%;
+    margin-right: 20%;
+    border-radius: 30px;
 }

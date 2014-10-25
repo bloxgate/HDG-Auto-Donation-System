@@ -58,11 +58,11 @@ $config['logs'] = array(
 //////////////////////////////////
 // Teamspeak Config             //
 //////////////////////////////////
-$config["teamspeak"]["Is Used"] = false;
-$config["teamspeak"]["Username"] = "Admin"; // Admin Username for TS3. Generally your one in TS3
-$config["teamspeak"]["Password"] = "password"; // This is the serverquery password generated in TS3.
-$config["teamspeak"]["IP"] = "127.0.0.1"; // IP of the server
-$config["teamspeak"]["Port"] = "1234"; // Port of your server
-$config["teamspeak"]["Query Port"] = "10011"; // Query port of the server.
+$config["teamspeak"]["isused"] = false;
+$config["teamspeak"]["username"] = "Admin"; // Admin Username for TS3. Generally your one in TS3
+$config["teamspeak"]["password"] = "password"; // This is the serverquery password generated in TS3.
+$config["teamspeak"]["ip"] = "127.0.0.1"; // IP of the server
+$config["teamspeak"]["port"] = "1234"; // Port of your server
+$config["teamspeak"]["qport"] = "10011"; // Query port of the server.
 
 ?>

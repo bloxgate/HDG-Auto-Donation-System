@@ -3,30 +3,103 @@ session_start();
 define('IS_INTERNAL',1);
 require "../core/settings.php";
 $db = mysqli_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword'], $setting['dbname']);
-
-if(isset($_COOKIE['user_id']) && isset($_COOKIE['user_username']) && $_COOKIE['user_id'] != null)
+global $notice;
+if($_GET['action'] == 'logout')
+{
+	//$_SESSION['user_id'] == null;
+	//$_SESSION['user_username'] == null;
+	if($_COOKIE['user_id'])
+	{
+		setcookie('user_id', null, time() + 9999999999999999);
+		setcookie('user_username', null, time() + 99999999999999999);
+		$notice = "You have been succesfully logged out!";
+	}else{
+		$error = "You have already been logged out!";
+	}
+}
+if($_GET['return']
+if(isset($_COOKIE['user_id']) && isset($_COOKIE['user_username']) && $_COOKIE['user_id'] != null && !isset($_GET['action']))
 {
 	$sql="SELECT * FROM admin WHERE id='{$_COOKIE['user_id']}' AND username='{$_COOKIE['user_username']}'" or die(mysql_error());
-	$result=mysqli_query($db, $sql);
-	$count=mysqli_num_rows($result);
+	$result = mysqli_query($db, $sql);
+	$count = mysqli_num_rows($result);
 	if($count==1)
 	{
-		header("location:admin.php");
+		if($_POST['return']){
+			header("location:admin.php?x={$_POST['return']}");
+		}else{
+			header("location:admin.php");
+		}
 	}
+}
+if($_POST['myusername']){
+	ini_set ("display_errors", "1");
+	error_reporting(E_ALL);
+	
+	ob_start();
+	
+	// This will connect you to your database
+	// Defining your login details into variables
+	$myusername=$_POST['myusername'];
+	$mypassword=$_POST['mypassword'];
+	$encrypted_mypassword=md5($mypassword); //MD5 Hash for security
+	
+	// Check for common basic SQL injection methods. Slashes and quotes can trick php or mysql into executing external code, thus compromising the entire software.
+	$myusername = stripslashes($myusername);
+	$mypassword = stripslashes($mypassword);
+	$myusername = mysqli_real_escape_string($db, $myusername);
+	$mypassword = mysqli_real_escape_string($db, $mypassword);
+	
+	$sql="SELECT * FROM admin WHERE username='$myusername' and password='$encrypted_mypassword'";
+	$result=mysqli_query($db, $sql);
+	
+	// Checking table row
+	$count=mysqli_num_rows($result);
+	// If username and password is a match, the count will be 1
+	
+	if($count==1)
+	{
+		// If everything checks out, you will now be forwarded to admin.php
+		$user = mysqli_fetch_assoc($result);
+		if($_POST["keeplogged"]){
+			setcookie('user_id', $user['id'], time()+3600*9001); // Todo: domain.
+			setcookie('user_username', $user['username'], time()+3600*9001); // Todo: domain.
+		}else{
+			setcookie('user_id', $user['id'], time()+3600); // Todo: domain.
+			setcookie('user_username', $user['username'], time()+3600); // Todo: domain.
+		}
+		if($_GET['return']){
+			header("location:admin.php?x={$_GET['return']}");
+		}else{
+			header("location:admin.php");
+		}
+	}
+	//If the username or password is wrong, you will receive this message below.
+	else
+	{
+		$error = "Wrong Username or Password";
+	}
+
+	ob_end_flush();
 }
 ?>
 <html><head>
-<link href="default.css" rel="stylesheet" type="text/css" />
-</head><body bgcolor="tan">
-<center><h2>Administrator Control Panel</h2></center><br><br>
-
-<table width="300" border="0" align="center" cellpadding="0" cellspacing="1" bgcolor="#FFFFFF">
+<link href="../default.css" rel="stylesheet" type="text/css" />
+</head><body bgcolor="black">
+<center><h1 class="label">Administrator Control Panel</h1></center><br>
+<?php if($error){
+	echo "<div align=\"center\" class=\"error\"><div style=\"float:left;\"><img src=\"../images/error.png\"></div> {$error}</div>";
+}
+if($notice){
+	echo "<div align=\"center\" class=\"success\"><div style=\"float:left;\"><img src=\"../images/success.png\" ></div> {$notice}</div>";
+}?>
+<br>
+<!-- Reminder: Redesign this login site -->
+<form name="form1" method="post" action="./">
+<input type="hidden" name="return" value="<?php echo $_GET["return"]; ?>">
+<table width="300" border="0" align="center" cellpadding="3" cellspacing="1" bgcolor="#E6ECEF" class="login">
 <tr>
-<form name="form1" method="post" action="checklogin.php">
-<td>
-<table width="100%" border="0" cellpadding="3" cellspacing="1" bgcolor="tan">
-<tr>
-<td colspan="3"><strong>Administrator Login </strong></td>
+<td colspan="3"><strong><center>Administrator Login</center></strong></td>
 </tr>
 <tr>
 <td width="78">Username</td>
@@ -39,16 +112,14 @@ if(isset($_COOKIE['user_id']) && isset($_COOKIE['user_username']) && $_COOKIE['u
 <td><input name="mypassword" type="password" id="mypassword"></td>
 </tr>
 <tr>
-<td>&nbsp;</td>
-<td>&nbsp;</td>
-<td><input type="submit" name="Submit" value="Login"></td>
+<td colspan="3"><center><input type="submit" name="Submit" value="Login"></center></td>
+</tr>
+<tr>
+<td colspan="3"><center><input type="checkbox" name="keeplogged"><br>Remember Me</center></td>
 </tr>
 </table>
-</td>
 </form>
-</tr>
-</table>
 <center>
-<br><br>Return to </font><a href="../"><b>Front-End</b></a>
+<br><br><font color="white">Return to </font><a href="../"><b>Front-End</b></a>
 </center>
 </body></html>

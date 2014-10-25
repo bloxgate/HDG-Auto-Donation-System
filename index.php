@@ -36,14 +36,14 @@ function GetSteamNorm($Steam64){
 }
 global $paypalurl;
 global $paypalemail;
-$paypalurl = $config["paypal"]["Sandbox API Link"];
+$paypalurl;
 $paypalemail;
-if($config["paypal"]["Sandbox Mode"]){
-	$paypalurl = $config["paypal"]["Sandbox API Link"];
-	$paypalemail = $config["paypal"]["Sandbox Email"];
+if($config['payment']['sandbox']){
+	$paypalurl = $config['payment']['sandbox_api'];
+	$paypalemail = $config['payment']['sandbox_email'];
 }else{
-	$paypalurl = $config["paypal"]["API Link"];
-	$paypalemail = $config["paypal"]["Email"];
+	$paypalurl = $config['payment']['api'];
+	$paypalemail = $config['payment']['email'];
 }
 $isBot = false;
 $op = strtolower($_SERVER['HTTP_X_OPERAMINI_PHONE']);
@@ -87,19 +87,19 @@ $ip = $_SERVER['REMOTE_ADDR'];
 					
 						<input name="cmd" value="_xclick" type="hidden" /> 
 						<input name="business" value="<?php echo $paypalemail;?>" type="hidden" />
-						<input name="item_name" value="<?php echo $config["paypal"]["Community Name"]; ?> - Game Server Donation" type="hidden" /> 
+						<input name="item_name" value="<?php echo $config['generic']['community']; ?> - Game Server Donation" type="hidden" /> 
 						<input name="no_shipping" value="1" type="hidden" />
-						<input name="return" value="<?php echo $config["paypal"]["Return URL"]; ?>" type="hidden" />
+						<input name="return" value="<?php echo $config['payment']['return']; ?>" type="hidden" />
 						<input type="hidden" name="rm" value="2" /> 
-						<input type="hidden" name="notify_url"value="<?php echo $config["paypal"]["IPN"]; ?>" />
+						<input type="hidden" name="notify_url"value="<?php echo $config['payment']['ipn']; ?>" />
 						<input name="cn" value="Comments" type="hidden" />
-						<input name="co" value="This is a donation for <?php echo $config["emails"]["Community Name"]; ?>, automatically processed at <?php $config["emails"]["Website"]; ?>. This donation earns various rewards at the aforementioned site for the payer, however all rewards are non-tangible and therefore not eligible for refund according to PayPal's Terms of Service." type="hidden" />
-						<input name="currency_code" value="<?php echo $config["paypal"]["Currency"]; ?>" type="hidden" />
+						<input name="co" value="This is a donation for <?php echo $config['generic']['community']; ?>, automatically processed at <?php $config['generic']['website']; ?>. This donation earns various rewards at the aforementioned site for the payer, however all rewards are non-tangible and therefore not eligible for refund according to PayPal's Terms of Service." type="hidden" />
+						<input name="currency_code" value="<?php echo $config['monetary']['symbol']; ?>" type="hidden" />
 						<input name="tax" value="0" type="hidden" /> 
 						<input name="lc" value="GB" type="hidden" />					
 						<h1 class="label">Packages</h1>
 						<br><br>
-						<table align='center' style="text-align:center;">
+						
 						<?php
 						require "./core/settings.php";
 						$db = mysqli_connect($setting['dbip'], $setting['dbusername'], $setting['dbpassword'],$setting['dbname']);
@@ -111,19 +111,19 @@ $ip = $_SERVER['REMOTE_ADDR'];
 							$i++;
 							if($i == 1)
 							{
-								echo "<tr>";
+								echo "<table align='center' style=\"text-align:center;\"><tr>";
 								//echo "<input type=\"radio\" id=\"cost".$i."\" name=\"amount\" value=\"".$val["Price"]."\" checked>".$val["Name"]." ($".$val["Price"]." ".$val["Currency"].")<br>";
 							}
-							echo "<td><h2 class=\"packageh2\">{$val[1]}<div class=\"package\">{$val[2]}</div></h2><h3 class=\"packageh3\">{$config['paypal']['Symbol']}{$val[3]} {$config['paypal']['Currency']}<br><input type=\"radio\" id=\"cost{$val[0]}\" name=\"amount\" value=\"{$val[3]}\"></h3></td>";							
+							echo "<td><h2 class=\"packageh2\">{$val[1]}<div class=\"package\">{$val[2]}</div></h2><h3 class=\"packageh3\">{$config['monetary']['symbol']}{$val[3]} {$config['monetary']['currency']}<br><input type=\"radio\" id=\"cost{$val[0]}\" name=\"amount\" value=\"{$val[3]}\"></h3></td>";							
 							if($i == 5)
 							{
 								echo "</tr>";
+								echo "</table>";
 								$i = 0;
 								//echo "<input type=\"radio\" id=\"cost".$i."\" name=\"amount\" value=\"".$val["Price"]."\">".$val["Name"]." ($".$val["Price"]." ".$val["Currency"].")<br>";
 							}
 						}
-						echo "</table>";
-						echo "<br><br><table align=\"center\"><tr><td width=\"50%\" style=\"background-color: #CDCD96;border: #474E42;border-width: 2;border-style: solid;border-radius: 50;border-right-style: dotted;border-top-right-radius: 0;border-bottom-right-radius: 0;\" align=\"center\">";
+						echo "<table align=\"center\"><br><br><tr><td width=\"50%\" class=\"barleft\" align=\"center\">";
 						$steam_login_verify = SteamSignIn::validate();
 						if(!empty($steam_login_verify))
 						{
@@ -132,8 +132,8 @@ $ip = $_SERVER['REMOTE_ADDR'];
 							$steamID = GetSteamNorm($steam_login_verify); //Get normal steamID		
 							$friendlyName = $steam->getFriendlyName();  //Get players ingame name.	
 									
-							echo "<a href=\"{$steam_sign_in_url}\"><img src=\"http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_small.png\" /></a>
-							<p> Successfully grabbed your details!</p></td><td width=\"50%\" style=\"background-color: #CDCD96;border: #474E42;border-width: 2;border-style: solid;border-radius: 50;border-;border-left-style: dotted;border-top-left-radius: 0;border-bottom-left-radius: 0;\" align=\"center\">
+							echo "<br><a href=\"{$steam_sign_in_url}\"><img src=\"http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_small.png\" /></a>
+							<br>Successfully grabbed your details!</td><td width=\"50%\" class=\"barright\" align=\"center\">
 							<input type=\"hidden\" name=\"on2\" value=\"Email Address\" maxlength=\"200\">Email Address:
 							<input type=\"text\" id=\"emaildonate\" name=\"os2\" value=\"\"><br>
 							<input type=\"hidden\" name=\"on0\" value=\"In-Game Name\" maxlength=\"200\">In-Game Name:
@@ -144,9 +144,9 @@ $ip = $_SERVER['REMOTE_ADDR'];
 						else
 						{
 							$steam_sign_in_url = SteamSignIn::genUrl();
-							echo "<a href=\"{$steam_sign_in_url}\"><img src=\"http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_small.png\" /></a>
-							<br><br>Sign in through Steam to automatically fill in your details.<br><font size=\"1\"><strong>What do you do with these details?</strong></font>	</td>
-							<td width=\"50%\" style=\"background-color: #CDCD96;border: #474E42;border-width: 2;border-style: solid;border-radius: 50;border-;border-left-style: dotted;border-top-left-radius: 0;border-bottom-left-radius: 0;\" align=\"center\">
+							echo "<br><a href=\"{$steam_sign_in_url}\"><img src=\"http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_small.png\" /></a>
+							<br>Sign in through Steam to automatically fill in your details.<br><font size=\"1\"><strong>What do you do with these details?</strong></font>	</td>
+							<td width=\"50%\" class=\"barright\" align=\"center\">
 							<table><tr><td><input type=\"hidden\" name=\"on2\" value=\"Email Address\" maxlength=\"200\">Email Address:<br>
 							<input type=\"hidden\" name=\"on0\" value=\"In-Game Name\" maxlength=\"200\">In-Game Name:<br>
 							<font color=\"#ff0000\">*</font><input type=\"hidden\" name=\"on1\" value=\"SteamID\" maxlength=\"200\"  >SteamID:</td><td>
@@ -156,10 +156,13 @@ $ip = $_SERVER['REMOTE_ADDR'];
 						}
 						?>
 						</tr></table>
-						<input style="background-color: #555E4F;border: #474E42;border-width: 2;border-style: solid;border-radius: 25;border-;border-top-style: dotted;border-top-left-radius: 0;border-top-right-radius: 0;padding: 5;" class="donatebutton" type="image" src="./images/paypal-donate.gif" border="0" name="submit" id="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" /><br>
+						<input class="donatebutton" type="image" src="./images/paypal-donate.gif" border="0" name="submit" id="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" /><br>
 					</form>
 				</div>
 			</p>
 		</div>
+        <center>
+            <b><a href="./admin/">Admin CP</a></b>
+        </center>
 	</body>
 </html>

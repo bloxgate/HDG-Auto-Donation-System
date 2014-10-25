@@ -20,18 +20,18 @@
 	File Version: 2014.09.15
 */
 //////////////////////////////////////////////////////////////////////////////////////////////////
-
-$message = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+$mail['subject'] = "{$config['generic']['community']} - Donation Notification";
+$mail['message'] = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
+<html xmlns=\"http://www.w3.org/1999/xhtml\">
 <head>
 <!-- If you delete this meta tag, Half Life 3 will never be released. -->
-<meta name="viewport" content="width=device-width" />
+<meta name=\"viewport\" content=\"width=device-width\" />
 
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
 <title></title>
 
-<!-- <link rel="stylesheet" type="text/css" href="stylesheets/email.css" /> -->
-<style rel="stylesheet" type="text/css">
+<!-- <link rel=\"stylesheet\" type=\"text/css\" href=\"stylesheets/email.css\" /> -->
+<style rel=\"stylesheet\" type=\"text/css\">
 /* ------------------------------------- 
 		GLOBAL 
 ------------------------------------- */
@@ -39,7 +39,7 @@ $message = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http
 	margin:0;
 	padding:0;
 }
-* { font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif; }
+* { font-family: \"Helvetica Neue\", \"Helvetica\", Helvetica, Arial, sans-serif; }
 
 img { 
 	max-width: 100%; 
@@ -139,7 +139,7 @@ table.footer-wrap { width: 100%;	clear:both!important;
 		TYPOGRAPHY 
 ------------------------------------- */
 h1,h2,h3,h4,h5,h6 {
-font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; line-height: 1.1; margin-bottom:15px; color:#000;
+font-family: \"HelveticaNeue-Light\", \"Helvetica Neue Light\", \"Helvetica Neue\", Helvetica, Arial, \"Lucida Grande\", sans-serif; line-height: 1.1; margin-bottom:15px; color:#000;
 }
 h1 small, h2 small, h3 small, h4 small, h5 small, h6 small { font-size: 60%; color: #6f6f6f; line-height: 0; text-transform: none; }
 
@@ -247,11 +247,11 @@ ul.sidebar li a h1,ul.sidebar li a h2,ul.sidebar li a h3,ul.sidebar li a h4,ul.s
 -------------------------------------------- */
 @media only screen and (max-width: 600px) {
 	
-	a[class="btn"] { display:block!important; margin-bottom:10px!important; background-image:none!important; margin-right:0!important;}
+	a[class=\"btn\"] { display:block!important; margin-bottom:10px!important; background-image:none!important; margin-right:0!important;}
 
-	div[class="column"] { width: auto!important; float:none!important;}
+	div[class=\"column\"] { width: auto!important; float:none!important;}
 	
-	table.social div[class="column"] {
+	table.social div[class=\"column\"] {
 		width:auto!important;
 	}
 
@@ -260,19 +260,19 @@ ul.sidebar li a h1,ul.sidebar li a h2,ul.sidebar li a h3,ul.sidebar li a h4,ul.s
 
 </head>
  
-<body bgcolor="#FFFFFF">
+<body bgcolor=\"#FFFFFF\">
 
 <!-- HEADER -->
-<table class="head-wrap" bgcolor="#999999">
+<table class=\"head-wrap\" bgcolor=\"#999999\">
 	<tr>
 		<td></td>
-		<td class="header container" >
+		<td class=\"header container\" >
 				
-				<div class="content">
-				<table bgcolor="#999999">
+				<div class=\"content\">
+				<table bgcolor=\"#999999\">
 					<tr>
-						<td><img src="'.$config["emails"]["Logo"].'" alt="'.$config["emails"]["Community Name"].'" /></td>
-						<td align="right"><h6 class="collapse">'.$config["emails"]["Sender"].'</h6></td>
+						<td><img src=\"{$config['geeric']['logo']}\" alt=\"{$config['generic']['community']}\" /></td>
+						<td align=\"right\"><h6 class=\"collapse\">{$config['generic']['community']}</h6></td>
 					</tr>
 				</table>
 				</div>
@@ -284,41 +284,42 @@ ul.sidebar li a h1,ul.sidebar li a h2,ul.sidebar li a h3,ul.sidebar li a h4,ul.s
 
 
 <!-- BODY -->
-<table class="body-wrap">
+<table class=\"body-wrap\">
 	<tr>
 		<td></td>
-		<td class="container" bgcolor="#FFFFFF">
+		<td class=\"container\" bgcolor=\"#FFFFFF\">
 
-			<div class="content">
+			<div class=\"content\">
 			<table>
 				<tr>
 					<td>
-						<h3>Hello '.$name.',</h3>
-						<p class="lead">Thank you for donating to '.$config["emails"]["Community Name"].'<br>
+						<h3>Hello {$name},</h3>
+						<p class=\"lead\">Thank you for donating to {$config['generic']['community']}<br>
 We have received your payment, and just for record, here is what we have...<br>
 <br>
 ------------------------- <br>
-Paid: $<i>'.$fee.'</i>'.$currency.'<br>
-SteamID: <i>'.$steamid.' </i><br>
-Rank: <i>'.$rank.' </i><br>
+Paid: $<i>{$fee}</i>{$currency}<br>
+SteamID: <i>{$steamid} </i><br>
+Package: <i>{$package} </i><br>
 -------------------------<br>
 <br>
-';foreach($config["rcon"]["Servers"] as $SERVER1){
-	if($SERVER1["Is Used"]){
-		$message .= '		'.$SERVER1["Status"]."<br>";
-	}
-	unset($SERVER1);
+";foreach($status['servers'] as $SERVER)
+{
+	$mail['message'] .= "		{$SERVER['status']}<br>";
+	unset($SERVER);
 }
-if($config["forum"]["Is Used"]){$message .= '		Forums - '.$forumstatus.'<br>';
-$message .='<br>
-		
-		'.$forumsummary.'<br>';}
-$message .= '
-
-		';
-		if($config["teamspeak"]["Is Used"]){ $message .='<br>'.$ts3summary.'<br>';};
-$message .= '
-		<br>'.$messagesummary.'<br>
+if($config["forum"]["Is Used"])
+{
+	$mail['message'] .= "	Forums - {$status['forum']['status']}
+	<br><br>
+	{$status['forum']['summary']}<br>";
+}
+if($config["teamspeak"]["Is Used"])
+{ 
+	$mail['message'] .='<br>'.$ts3summary.'<br>';
+};
+$mail['message'] .= '
+		<br>'.$mail['message']summary.'<br>
 		
 		If you have any questions, feel free to contact us at <a href="mailto:'.$config["emails"]["Contact Us"].'">'.$config["emails"]["Contact Us"].'</a>!<br>
 						<p>Thank you,<br>

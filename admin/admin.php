@@ -8,7 +8,11 @@ session_start();
 //If your session isn't valid, it returns you to the login screen for protection
 if(empty($_COOKIE['user_id']))
 {
- header("location:index.php");
+	if($_GET["x"]){
+		header("location:index.php?return={$_GET["x"]}");
+	}else{
+		header("location:index.php");
+	}
 }
 else
 {
@@ -19,7 +23,11 @@ else
 		$count=mysqli_num_rows($result);
 		if($count==0)
 		{
-			header("location:index.php");
+			if($_GET["x"]){
+				header("location:index.php?return={$_GET["x"]}");
+			}else{
+				header("location:index.php");
+			}
 		}
 	}
 }
@@ -71,9 +79,13 @@ if (isset($_GET["x"]))
 	{
 		config();
 	}
+	elseif($x[0] == "test")
+	{
+		test();
+	}
 	elseif($x[0] == "logout")
 	{
-		header("location:logout.php");
+		header("location:index.php?action=logout");
 	}
 	else
 	{
@@ -81,7 +93,80 @@ if (isset($_GET["x"]))
 	}
 }
 else { home(); }
+function menu2()
+{
+// Echo the left panel.
+	echo '<div id="fulladmin">';
+	echo '<ul id="adminleftlist">';
+	//Add a function and change this line to it.
+	echo '<br><center><a href="admin.php?x=home"><font color=';
+	if($_GET['x'] == "home" || !isset($_GET['x']))
+	{
+		echo "#9DDBF8";
+	}
+	else
+	{
+		echo "white";
+	}
+	echo '>Home</font></a></center><br><hr class="seperator">';
+		
+	echo '<br><center><a href="admin.php?x=servers"><font color=';
+	if($_GET['x'] == "servers")
+	{
+		echo "#9DDBF8";
+	}
+	else
+	{
+		echo "white";
+	}
+	echo '>Servers</font></a></center><br><hr class="seperator">';
 
+	echo '<br><center><a href="admin.php?x=packages"><font color=';
+	if($_GET['x'] == "packages")
+	{
+		echo "#9DDBF8";
+	}
+	else
+	{
+		echo "white";
+	}
+	echo '>Packages</font></a></center><br><hr class="seperator">';
+	
+		echo '<br><center><a href="admin.php?x=accounts"><font color=';
+	if($_GET['x'] == "accounts")
+	{
+		echo "#9DDBF8";
+	}
+	else
+	{
+		echo "white";
+	}
+	echo '>Accounts</font></a></center><br><hr class="seperator">';
+	
+	echo '<br><center><a href="admin.php?x=config"><font color=';
+	if($_GET['x'] == "config")
+	{
+		echo "#9DDBF8";
+	}
+	else
+	{
+		echo "white";
+	}
+	echo '>Configuration</font></a></center><br><hr class="seperator">';
+	
+	echo '<br><center><a href="admin.php?x=test"><font color=';
+	if($_GET['x'] == "test")
+	{
+		echo "#9DDBF8";
+	}
+	else
+	{
+		echo "white";
+	}
+	echo '>Test</font></a></center><br><hr class="seperator">';
+
+	echo '<li><a href="admin.php?x=logout"><font color=white>Log Out</font></a></center><br></ul>';
+}
 function menu()
 {
 // Echo the left panel.
@@ -91,59 +176,70 @@ function menu()
 	echo '<br><center><a href="admin.php?x=home"><font color=';
 	if($_GET['x'] == "home" || !isset($_GET['x']))
 	{
-		echo "orange";
+		echo "#9DDBF8";
 	}
 	else
 	{
 		echo "white";
 	}
-	echo '>Home</font></a></center><br>';
+	echo '>Home</font></a></center><br><hr class="seperator">';
 		
 	echo '<br><center><a href="admin.php?x=servers"><font color=';
 	if($_GET['x'] == "servers")
 	{
-		echo "orange";
+		echo "#9DDBF8";
 	}
 	else
 	{
 		echo "white";
 	}
-	echo '>Servers</font></a></center><br>';
+	echo '>Servers</font></a></center><br><hr class="seperator">';
 
 	echo '<br><center><a href="admin.php?x=packages"><font color=';
 	if($_GET['x'] == "packages")
 	{
-		echo "orange";
+		echo "#9DDBF8";
 	}
 	else
 	{
 		echo "white";
 	}
-	echo '>Packages</font></a></center><br>';
+	echo '>Packages</font></a></center><br><hr class="seperator">';
 	
 		echo '<br><center><a href="admin.php?x=accounts"><font color=';
 	if($_GET['x'] == "accounts")
 	{
-		echo "orange";
+		echo "#9DDBF8";
 	}
 	else
 	{
 		echo "white";
 	}
-	echo '>Accounts</font></a></center><br>';
+	echo '>Accounts</font></a></center><br><hr class="seperator">';
 	
 	echo '<br><center><a href="admin.php?x=config"><font color=';
 	if($_GET['x'] == "config")
 	{
-		echo "orange";
+		echo "#9DDBF8";
 	}
 	else
 	{
 		echo "white";
 	}
-	echo '>Configuration</font></a></center><br>';
+	echo '>Configuration</font></a></center><br><hr class="seperator">';
+	
+	echo '<br><center><a href="admin.php?x=test"><font color=';
+	if($_GET['x'] == "test")
+	{
+		echo "#9DDBF8";
+	}
+	else
+	{
+		echo "white";
+	}
+	echo '>Test</font></a></center><br><hr class="seperator">';
 
-	echo '<br><center><a href="admin.php?x=logout"><font color=white>Log Out</font></a></center><br></div>';
+	echo '<br><center><a href="index.php?action=logout"><font color=white>Log Out</font></a></center><br></div>';
 }
 
 function home()
@@ -174,11 +270,12 @@ function packages()
 	$packages = mysqli_fetch_all($result);
 	foreach($result as $key => $val)
 	{
+		$description = str_replace("<br />\n", "\n", $val[description]);
 		echo "
 			<form action=\"admin.php?x=packages\" method=\"post\">
 			<tr><td style=\"vertical-align:top\"><input type=\"hidden\" name=\"id\" value=\"{$val[id]}\">{$val[id]}</td>
 			<td style=\"vertical-align:top\"><input type=\"text\" name=\"name\" value=\"{$val[name]}\"></td>
-			<td style=\"vertical-align:top\"><textarea rows=\"4\" cols=\"25\" name=\"description\">{$val[description]}</textarea></td>
+			<td style=\"vertical-align:top\"><textarea rows=\"4\" cols=\"25\" name=\"description\">{$description}</textarea></td>
 			<td style=\"vertical-align:top\"><input type=\"text\" name=\"price\" value=\"{$val[price]}\"></td>
 			<td style=\"vertical-align:top\"><input type=\"text\" name=\"command\" value=\"{$val[command]}\"></td>
 			<td style=\"vertical-align:top\"><input type=\"text\" name=\"rank\" value=\"{$val[rank]}\"></td>
@@ -208,6 +305,7 @@ function packages_go()
 	if($_POST['id'] != "NEW" && $_POST['delete'] != "Delete")
 	{
 		$description = addslashes($_POST['description']);
+		$description = nl2br($description);
 		$name = addslashes($_POST['name']);
 		$query = "UPDATE packages SET `name` = '{$name}', `description` = '{$description}', `price` = '{$_POST['price']}', `command` = '{$_POST['command']}', `rank` = '{$_POST['rank']}' WHERE `id` = {$_POST['id']};";
 		$result = mysqli_query($db,$query);
@@ -222,6 +320,7 @@ function packages_go()
 	elseif($_POST['id'] == "NEW")
 	{
 		$description = addslashes($_POST['description']);
+		$description = nl2br($description);
 		$name = addslashes($_POST['name']);
 		$query = "INSERT INTO packages (`name`, `description`, `price`, `command`,`rank`) VALUES ('{$name}', '{$description}', '{$_POST['price']}', '{$_POST['command']}', '{$_POST['rank']}');";
 		$result = mysqli_query($db,$query);
@@ -368,6 +467,14 @@ function config()
 {
 menu();
 echo '<div id="adminright"><center><h1>Configuration</h1><br><br>';
+echo "Todo: everything in here. It's going to be messy code...";
+}
+
+function test()
+{
+menu2();
+echo '<div id="adminright"><center><h1>Configuration</h1><br><br>';
+echo "This menu is where I test non-standard things.";
 }
 
 function servers()
@@ -495,7 +602,6 @@ echo "<h3><font color=red><strong>"; // Get the admin's attention.
 	
 	echo "</strong></font></h3><br><br>";
 }
-echo '</center></div></div>';
-?>
-<div id="adminright"><center><br><br><br><br>Return to main <a href="admin.php"><font color="red">Control Panel</font></a>, or you can <a href="logout.php"><font color="red">Log Out</font></a></center></div>
+echo '</center>';
+?><center><br><br><br><br>Return to main <a href="admin.php"><font color="#00ABEC">Control Panel</font></a>, or you can <a href="logout.php"><font color="#00ABEC">Log Out</font></a></center></div></div>
 </body>
