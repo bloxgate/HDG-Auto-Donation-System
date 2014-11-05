@@ -17,18 +17,20 @@ if($_GET['action'] == 'logout')
 		$error = "You have already been logged out!";
 	}
 }
-if($_GET['return']
-if(isset($_COOKIE['user_id']) && isset($_COOKIE['user_username']) && $_COOKIE['user_id'] != null && !isset($_GET['action']))
+if($_GET['return'])
 {
-	$sql="SELECT * FROM admin WHERE id='{$_COOKIE['user_id']}' AND username='{$_COOKIE['user_username']}'" or die(mysql_error());
-	$result = mysqli_query($db, $sql);
-	$count = mysqli_num_rows($result);
-	if($count==1)
+	if(isset($_COOKIE['user_id']) && isset($_COOKIE['user_username']) && $_COOKIE['user_id'] != null && !isset($_GET['action']))
 	{
-		if($_POST['return']){
-			header("location:admin.php?x={$_POST['return']}");
-		}else{
-			header("location:admin.php");
+		$sql="SELECT * FROM admin WHERE id='{$_COOKIE['user_id']}' AND username='{$_COOKIE['user_username']}'";
+		$result = mysqli_query($db, $sql);
+		$count = mysqli_num_rows($result);
+		if($count==1)
+		{
+			if($_POST['return']){
+				header("location:admin.php?x={$_POST['return']}");
+			}else{
+				header("location:admin.php");
+			}
 		}
 	}
 }
