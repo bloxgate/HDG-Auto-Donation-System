@@ -94,7 +94,7 @@ $ip = $_SERVER['REMOTE_ADDR'];
 						<input type="hidden" name="notify_url"value="<?php echo $config['payment']['ipn']; ?>" />
 						<input name="cn" value="Comments" type="hidden" />
 						<input name="co" value="This is a donation for <?php echo $config['generic']['community']; ?>, automatically processed at <?php $config['generic']['website']; ?>. This donation earns various rewards at the aforementioned site for the payer, however all rewards are non-tangible and therefore not eligible for refund according to PayPal's Terms of Service." type="hidden" />
-						<input name="currency_code" value="<?php echo $config['monetary']['symbol']; ?>" type="hidden" />
+						<input name="currency_code" value="<?php echo $config['monetary']['currency']; ?>" type="hidden" />
 						<input name="tax" value="0" type="hidden" /> 
 						<input name="lc" value="GB" type="hidden" />					
 						<h1 class="label">Packages</h1>
