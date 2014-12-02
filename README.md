@@ -58,6 +58,7 @@ A ticked box means its fixed.
 | ScP | Author of the TeamSpeak 3 library |
 | ichimonai.com | Authoring steamlogin.php |
 | Cyberuben | Numerous suggestions and debugging |
+| bloxgate | Helping with pest control |
 
 ### Licensing
 
