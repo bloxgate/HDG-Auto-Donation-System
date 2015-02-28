@@ -16,7 +16,7 @@ error_reporting(E_ALL);
 //$_POST["progress"] = "";
 define('ROOT', dirname(__FILE__)."/");
 define('IS_INTERNAL', 1);
-define('VERSION', 1.1);
+define('VERSION', 1.2);
 if(!isset($_GET['p']))
 {
 	$_GET['p'] = "";
@@ -45,23 +45,23 @@ if(!file_exists(ROOT."/core/settings.php"))
 ////LICENSE////
 if(!isset($_POST["progress"]) || $_POST["progress"] == "" || $_GET["p"] == "0")
 {
-	echo '<div id="fulladmin">';
-	echo '<div id="adminleft">';
-	echo '<br><center><a href="install.php?p=0"><font color=orange>License Agreement</font></a></center><br>';
-	echo '<br><center><font color=white>Database info</font></center><br>';
-	echo '<br><center><font color=white>Admin Account info</font></center><br>';
-	echo '<br><center><font color=white>Final step</font></center><br></div>';
-	echo '<div id="adminright"><center><h1>Welcome</h1><br><br>';
-	echo 'Congratulations on choosing the HDG Automated Donation System for your community.<br><br>By choosing us, you are supporting the Garry\'s Mod Community by sticking to Open Source Software, developed by the community for the community.';
-	echo '<br><br>Before continuing, please take the time to read and accept the license that applies in part to this software. This license is used to protect the software from illegal profitable distribution, including the sale of this software.<br>If you ever paid for this software, demand a full refund immediately.'; 
-	echo '<pre><div class="license_agreement">';
-	echo $license;
-	echo '</div></pre>';
-	echo '<br><strong>By clicking Next, you agree to the terms stated in the GNU General Public License above.</strong>';
-	echo '<form action="./install.php" method="post">';
-	echo '<input type="hidden" name="progress" value="1">';
-	echo "<input type='submit' name='submit' value='Next'></form>";
-	echo '</center></div></div>';
+	echo '<div id="fulladmin">
+	<div id="adminleft">
+	<br><center><a href="install.php?p=0"><font color=orange>License Agreement</font></a></center><br>
+	<br><center><font color=white>Database info</font></center><br>
+	<br><center><font color=white>Admin Account info</font></center><br>
+	<br><center><font color=white>Final step</font></center><br></div>
+	<div id="adminright"><center><h1>Welcome</h1><br><br>
+	Congratulations on choosing the HDG Automated Donation System for your community.<br><br>By choosing us, you are supporting the Garry\'s Mod Community by sticking to Open Source Software, developed by the community for the community.
+	<br><br>Before continuing, please take the time to read and accept the license that applies in part to this software. This license is used to protect the software from illegal profitable distribution, including the sale of this software.<br>If you ever paid for this software, demand a full refund immediately.
+	<pre><div class="license_agreement">
+	'.$license.'
+	</div></pre>
+	<br><strong>By clicking Next, you agree to the terms stated in the GNU General Public License above.</strong>
+	<form action="./install.php" method="post">
+	<input type="hidden" name="progress" value="1">
+	<input type=\'submit\' name=\'submit\' value=\'Next\'></form>
+	</center></div></div>';
 }
 ////SETTINGS////
 if(isset($_POST["progress"]) && $_POST["progress"] == "1" || $_GET["p"] == "1")
@@ -113,13 +113,20 @@ if(isset($_POST["progress"]) && $_POST["progress"] == "2")
 	fclose($file);
 	echo "Done! <br>";
 	echo "Connecting to Database... ";
-	$db = mysqli_connect($_POST["ip"],$_POST["user"],$_POST["pass"],$_POST["db"]);
 	$error = 0;
-	if(mysqli_connect_errno($db))
-	{
-		echo "<b>Failed - Connection not established!</b><br>";
+	try {
+		$db = new PDO("mysql:host={$_POST['ip']};dbname={$_POST['db']};charset=utf8", $_POST['user'], $_POST['pass']);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	} catch (PDOException $e) {
+		echo "<b>Failure: " . $e->getMessage();
 		$error++;
 	}
+		
+	
+	
+	
+	
+	//$db = mysqli_connect($_POST["ip"],$_POST["user"],$_POST["pass"],$_POST["db"]);
 	if($error == 0)
 	{
 		echo "Packages... ";
@@ -133,7 +140,8 @@ if(isset($_POST["progress"]) && $_POST["progress"] == "2")
 			command VARCHAR(250),
 			rank VARCHAR(250)
 			)";
-		$result = mysqli_query($db,$packages);
+		$stmt = $db->prepare($packages);
+		$stmt->execute();
 		echo "<b>Success!</b><br>";
 		
 		echo "Admin CP... ";
@@ -146,7 +154,8 @@ if(isset($_POST["progress"]) && $_POST["progress"] == "2")
 			email VARCHAR(250),
 			root BOOLEAN
 			)";
-		$result = mysqli_query($db,$admin);
+		$stmt = $db->prepare($admin);
+		$stmt->execute();
 		echo "<b>Success!</b><br>";
 		
 		echo "Servers... ";
@@ -162,7 +171,8 @@ if(isset($_POST["progress"]) && $_POST["progress"] == "2")
 			name VARCHAR(250),
 			ban VARCHAR(250)
 			)";
-		$result = mysqli_query($db,$server);
+		$stmt = $db->prepare($server);
+		$stmt->execute();
 		echo "<b>Success!</b><br>";
 		
 		echo "Emails... ";
@@ -172,7 +182,8 @@ if(isset($_POST["progress"]) && $_POST["progress"] == "2")
 			PRIMARY KEY(id),
 			email VARCHAR(250)
 			)";
-		$result = mysqli_query($db,$emails);
+		$stmt = $db->prepare($emails);
+		$stmt->execute();
 		echo "<b>Success!</b><br>";
 		
 		echo "Donations... ";
@@ -186,7 +197,8 @@ if(isset($_POST["progress"]) && $_POST["progress"] == "2")
 			rank VARCHAR(250),
 			amount VARCHAR(250)
 			)";
-		$result = mysqli_query($db,$donations);
+		$stmt = $db->prepare($donations);
+		$stmt->execute();
 		echo "<b>Success!</b><br>";
 		echo "<form action=\"install.php\" method=\"post\">";
 		echo "<input type='hidden' name='progress' value='3'>";
@@ -230,11 +242,13 @@ if(isset($_POST["progress"]) && $_POST["progress"] == "4")
 	echo '<div id="adminright"><center><h1>Admin Account info</h1><br><br>';
 	echo "Adding the admin account now.<br>";
 	require ROOT."/core/settings.php";
-	$db = mysqli_connect($setting['dbip'],$setting['dbusername'],$setting['dbpassword'],$setting['dbname']);
+	
 	$error = 0;
-	if(mysqli_connect_errno($db))
-	{
-		echo "<b>Fatal error - Connection not established!</b><br>";
+	try {
+		$db = new PDO("mysql:host={$setting['dbip']};dbname={$setting['dbname']};charset=utf8", $setting['dbusername'], $setting['dbpassword']);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	} catch (PDOException $e) {
+		echo "<b>Failure: " . $e->getMessage();
 		$error++;
 	}
 	if($error == 0)
@@ -244,7 +258,9 @@ if(isset($_POST["progress"]) && $_POST["progress"] == "4")
 		$myEmail = $_POST['email'];
 		$newpass = md5($myPassword); //This will make your password encrypted into md5, a high security hash
 	
-		$sql = mysqli_query($db,"INSERT INTO admin (`id`, `username`, `password`, `email`, `root`) VALUES ('', '$myUsername','$newpass', '$myEmail', true)" );
+		//$sql = mysqli_query($db,"INSERT INTO admin (`id`, `username`, `password`, `email`, `root`) VALUES ('', '$myUsername','$newpass', '$myEmail', true)" );
+		$stmt = $db->prepare("INSERT INTO admin (`id`, `username`, `password`, `email`, `root`) VALUES ('', '$myUsername','$newpass', '$myEmail', true)");
+		$stmt->execute();
 			
 		echo "Admin account {$_POST["username"]} was created successfully!";
 		echo "<form action=\"install.php\" method=\"post\">";

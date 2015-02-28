@@ -20,11 +20,15 @@
 	File Version: 2014.09.15
 */
 //////////////////////////////////////////////////////////////////////////////////////////////////
+define('ROOT', dirname(__FILE__)."/");
+if(!file_exists(ROOT."/core/settings.php")){
+	header("location:install.php");
+}
 define('IS_INTERNAL',true);
 require("core/config.php");
 require("core/steamapiv2.class.php");
 require("core/steamlogin.php");
-error_reporting(~E_ALL);
+error_reporting(E_ALL);
 
 function GetSteamNorm($Steam64){
 	$authserver = bcsub( $Steam64, '76561197960265728' ) & 1;
@@ -77,7 +81,7 @@ $ip = $_SERVER['REMOTE_ADDR'];
 <html>
 <link href="default.css" rel="stylesheet" type="text/css" />
 	<head>
-		<title>Test</title>
+		<title>Donate</title>
 	</head>
 	<body bgcolor="tan">
 		<div style="margin-top:3px;">
