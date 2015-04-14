@@ -25,7 +25,7 @@ if(!isset($_GET['p']))
 <link href="default.css" rel="stylesheet" type="text/css" />
 </head>
 <?php
-if(!file_exists(ROOT."/core/settings.php"))
+if(!file_exists(ROOT."core/settings.php"))
 {
 	//Create it!
 	$settings = "<?php
