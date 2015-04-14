@@ -241,7 +241,7 @@ if(isset($_POST["progress"]) && $_POST["progress"] == "4")
 	echo '<br><center><font color=white>Final step</font></center><br></div>';
 	echo '<div id="adminright"><center><h1>Admin Account info</h1><br><br>';
 	echo "Adding the admin account now.<br>";
-	require ROOT."/core/settings.php";
+	require ROOT."core/settings.php";
 	
 	$error = 0;
 	try {
